@@ -1,1414 +1,941 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI SIEM Cyber Threat Detection System | Neural Networks on Event Profiles</title>
-  <link rel="stylesheet" href="/static/css/styles.css">
-  <script>
-    // Immediate SOC Authentication Guard: Redirects unauthenticated operators to /login
-    (function() {
-      try {
-        var token = localStorage.getItem("siem_auth_token") || sessionStorage.getItem("siem_auth_token");
-        var isBypass = window.location.search.indexOf("bypass_auth=1") !== -1;
-        if (!token && !isBypass) {
-          window.location.replace("/login");
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <!-- Chart.js via CDN with local fallback -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <title>AI SIEM SOC - Cyber Threat Detection</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #070b14;
+      --sidebar: #0b1120;
+      --card: #111827;
+      --card2: #0f172a;
+      --border: #263244;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --cyan: #00e5ff;
+      --green: #00e676;
+      --red: #ff1744;
+      --yellow: #ffb300;
+      --purple: #bb86fc;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at 80% 10%, rgba(0,229,255,0.08), transparent 30%),
+        #070b14;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 260px;
+      min-height: 100vh;
+      background: rgba(11,17,32,0.98);
+      border-right: 1px solid var(--border);
+      padding: 22px 15px;
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      margin-bottom: 25px;
+    }
+
+    .brand-icon {
+      font-size: 32px;
+    }
+
+    .brand h2 {
+      color: var(--cyan);
+      font-size: 20px;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      margin-bottom: 7px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: 0.3s;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(0,229,255,0.1);
+      color: var(--cyan);
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* MAIN */
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      padding: 25px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .topbar h1 {
+      font-size: 26px;
+    }
+
+    .topbar p {
+      color: var(--muted);
+      margin-top: 7px;
+      font-size: 13px;
+    }
+
+    .status {
+      padding: 10px 16px;
+      background: rgba(0,230,118,0.1);
+      border: 1px solid rgba(0,230,118,0.3);
+      border-radius: 20px;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    /* TABS */
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* CARDS */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(17,24,39,0.95);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card-title {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .number {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .cyan { color: var(--cyan); }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .yellow { color: var(--yellow); }
+
+    .section-title {
+      font-size: 19px;
+      margin-bottom: 15px;
+      color: var(--text);
+    }
+
+    /* UPLOAD */
+
+    .upload-box {
+      border: 2px dashed var(--cyan);
+      border-radius: 12px;
+      padding: 45px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .upload-box:hover {
+      background: rgba(0,229,255,0.05);
+    }
+
+    .upload-box input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    /* BUTTONS */
+
+    button {
+      border: none;
+      cursor: pointer;
+      padding: 11px 18px;
+      border-radius: 7px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .primary {
+      background: var(--cyan);
+      color: #000;
+    }
+
+    .primary:hover {
+      opacity: 0.85;
+    }
+
+    .secondary {
+      background: #1e293b;
+      color: white;
+      margin: 5px;
+    }
+
+    /* FORM */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 11px;
+      background: #0b1220;
+      color: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* VERDICT */
+
+    .verdict {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    .verdict.normal {
+      display: block;
+      background: rgba(0,230,118,0.08);
+      border: 1px solid var(--green);
+    }
+
+    .verdict.threat {
+      display: block;
+      background: rgba(255,23,68,0.08);
+      border: 1px solid var(--red);
+    }
+
+    /* TABLE */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 13px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    th {
+      color: var(--cyan);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 800px) {
+
+      .sidebar {
+        width: 70px;
+        padding: 15px 8px;
+      }
+
+      .brand h2,
+      .brand p,
+      .nav-text,
+      .sidebar-footer {
+        display: none;
+      }
+
+      .nav-item {
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .main {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+        padding: 15px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <!-- Dynamic Cybersecurity Background Network Canvas & Ambient Lighting (Matches Login Theme) -->
-  <div class="dashboard-background-wrapper" aria-hidden="true">
-    <canvas id="dashboardNetworkCanvas" class="dashboard-bg-canvas"></canvas>
-    <div class="ambient-glow glow-top-left"></div>
-    <div class="ambient-glow glow-top-right"></div>
-    <div class="ambient-glow glow-bottom-center"></div>
-  </div>
+  <!-- SIDEBAR -->
 
-  <!-- =========================================================================
-       SIDEBAR NAVIGATION (EXACTLY 9 SECTIONS AS SPECIFIED)
-       ========================================================================= -->
   <aside class="sidebar">
-    <div class="sidebar-header">
+
+    <div class="brand">
       <div class="brand-icon">🛡️</div>
       <div>
-        <div class="brand-title">AI SIEM SOC</div>
-        <div class="brand-subtitle">ANN Event Profiles</div>
+        <h2>AI SIEM SOC</h2>
+        <p>Cyber Threat Detection</p>
       </div>
     </div>
 
-    <nav class="sidebar-nav">
-      <a class="nav-item active" data-view="view-dashboard">
-        <span class="nav-icon">🏠</span>
-        <span>Home / SOC Overview</span>
-      </a>
-      <a class="nav-item" data-view="view-analyzer">
-        <span class="nav-icon">🔬</span>
-        <span>Threat Analyzer</span>
-      </a>
-      <a class="nav-item" data-view="view-profiles">
-        <span class="nav-icon">🎯</span>
-        <span>Event Profiles</span>
-      </a>
-      <a class="nav-item" data-view="view-models">
-        <span class="nav-icon">🧠</span>
-        <span>Model Hub</span>
-      </a>
-      <a class="nav-item" data-view="view-anomaly">
-        <span class="nav-icon">🌲</span>
-        <span>Anomaly Detection</span>
-      </a>
-      <a class="nav-item" data-view="view-history">
-        <span class="nav-icon">📜</span>
-        <span>Detection History</span>
-      </a>
-      <a class="nav-item" data-view="view-assistant">
-        <span class="nav-icon">🤖</span>
-        <span>AI Cybersecurity Assistant</span>
-      </a>
-      <a class="nav-item" data-view="view-about">
-        <span class="nav-icon">ℹ️</span>
-        <span>About Project</span>
-      </a>
-    </nav>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+      <span>🏠</span>
+      <span class="nav-text">Dashboard</span>
+    </div>
+
+    <div class="nav-item" onclick="showPage('analyzer', this)">
+      <span>🔬</span>
+      <span class="nav-text">Threat Analyzer</span>
+    </div>
+
+    <div class="nav-item" onclick="showPage('upload', this)">
+      <span>📁</span>
+      <span class="nav-text">Upload Dataset</span>
+    </div>
+
+    <div class="nav-item" onclick="showPage('history', this)">
+      <span>📜</span>
+      <span class="nav-text">Detection History</span>
+    </div>
+
+    <div class="nav-item" onclick="showPage('about', this)">
+      <span>ℹ️</span>
+      <span class="nav-text">About Project</span>
+    </div>
 
     <div class="sidebar-footer">
-      <span>SIEM v1.0 • CICIDS2017</span>
-      <button class="theme-toggle-btn" id="themeToggleBtn">☀️ Light Mode</button>
-      <a href="/login" target="_top" class="nav-item" style="margin-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 8px; color: var(--accent-cyan); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-        <span>🔐</span>
-        <span>Operator Login</span>
-      </a>
+      AI SIEM v1.0
     </div>
+
   </aside>
 
-  <!-- =========================================================================
-       MAIN WRAPPER
-       ========================================================================= -->
-  <div class="main-wrapper">
-    <header class="top-bar">
-      <div class="page-title-box">
-        <h1 id="pageTitle">Home / SOC Overview</h1>
-        <p>Continuous AI-Powered Network Event Profile Ingestion & Classification</p>
-      </div>
 
-      <div class="top-telemetry">
-        <div class="telemetry-pill" id="systemStatusPill">
-          <span class="pulsing-dot"></span> Status: OPERATIONAL
-        </div>
-        <div class="telemetry-pill" id="experimentPill">
-          <span>Active Config:</span> <strong style="color: var(--accent-purple)" id="activeExperimentLabel">Experiment B</strong> <span style="font-size: 11px; color: var(--text-muted);">(Multi-Day Control &amp; Unseen Evaluation)</span>
-        </div>
-        <div class="telemetry-pill">
-          <span>Sliding Window:</span> <strong style="color: var(--accent-cyan)">10m / 60s</strong>
-        </div>
-        <div class="telemetry-pill" id="operatorAuthPill" style="display: flex; align-items: center; gap: 8px;">
-          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #00E5FF; box-shadow: 0 0 6px #00E5FF;"></span>
-          <span id="operatorDisplayName" style="font-weight: 600; color: #fff;">Lead SOC Analyst</span>
-          <a href="/login" id="btnAuthAction" style="font-size: 11px; color: var(--accent-cyan); text-decoration: none; padding: 2px 7px; border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 4px; margin-left: 2px; transition: all 0.2s;">Sign Out</a>
-        </div>
-      </div>
-    </header>
+  <!-- MAIN -->
 
-    <main class="content-area">
+  <main class="main">
 
-      <!-- =====================================================================
-           SECTION 1: HOME / SOC OVERVIEW
-           ===================================================================== -->
-      <section id="view-dashboard" class="tab-view active">
-        <!-- Active Dataset Batch Status Banner / Empty State -->
-        <div id="socBatchNotice" class="batch-status-panel" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; border-left: 3px solid var(--accent-cyan); flex-wrap: wrap; gap: 10px;">
-          <div>
-            <span style="font-weight: 600; color: var(--text-primary);" id="socBatchNoticeText">No uploaded dataset has been analysed yet. Upload a CSV in Threat Analyzer to view batch classification statistics.</span>
-          </div>
-          <span class="badge badge-info" id="socBatchNoticeBadge">Awaiting CSV Upload</span>
-        </div>
+    <div class="topbar">
 
-        <div class="grid-cards">
-          <div class="card">
-            <div class="card-label">Total Records Analysed</div>
-            <div class="card-value" id="kpiTotalAnalysed">0</div>
-            <div class="card-subtext highlight-cyan" id="kpiTotalAnalysedSub">Source: Awaiting Upload</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Normal Events</div>
-            <div class="card-value" id="kpiNormalEvents">0</div>
-            <div class="card-subtext highlight-green" id="kpiNormalEventsSub">0.0% of analysed</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Threats Detected</div>
-            <div class="card-value" id="kpiThreatsDetected">0</div>
-            <div class="card-subtext highlight-red" id="kpiThreatsDetectedSub">0.0% of analysed</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Unmatched / Invalid Records</div>
-            <div class="card-value" id="kpiInvalidRecords">0</div>
-            <div class="card-subtext highlight-amber" id="kpiInvalidRecordsSub">0 malformed rows</div>
-          </div>
-        </div>
-
-        <div class="grid-2col">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Normal vs Threat Distribution</div>
-              <span class="badge badge-info" id="badgeDetectionSummary">Awaiting Batch Upload</span>
-            </div>
-            <div style="height: 280px; position: relative;" id="containerDetectionSummary">
-              <canvas id="chartDetectionSummary"></canvas>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Detected Attack Category Breakdown</div>
-              <span class="badge badge-info" id="badgeAttackCategories">Awaiting Batch Upload</span>
-            </div>
-            <div style="height: 280px; position: relative;" id="containerAttackCategories">
-              <canvas id="chartAttackCategories"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Launch SOC Command Center -->
-        <div class="card" style="margin-top: 16px;">
-          <div class="card-header">
-            <div class="card-title">SOC Operations Command Center</div>
-            <span class="badge badge-normal">Hybrid Supervised & Unsupervised</span>
-          </div>
-          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 16px;">
-            Our AI-SIEM system transforms high-volume network flows into 10-minute sliding window event sets grouped by communicating host-pairs. Each set is mapped to 8 basepoint cosine similarities and classified using a regularized Soft-Voting Neural Ensemble (FCNN + CNN + LSTM) complemented by an unsupervised Isolation Forest for zero-day threat detection.
-          </p>
-          <div class="btn-group" style="flex-wrap: wrap;">
-            <button class="btn btn-primary" onclick="document.querySelector('[data-view=\'view-analyzer\']').click()">🔬 Threat Analyzer</button>
-            <button class="btn btn-secondary" onclick="document.querySelector('[data-view=\'view-anomaly\']').click()">🌲 Anomaly Detection</button>
-            <button class="btn btn-secondary" onclick="document.querySelector('[data-view=\'view-history\']').click()">📜 Detection History</button>
-            <button class="btn btn-secondary" onclick="document.querySelector('[data-view=\'view-assistant\']').click()">🤖 AI SOC Assistant</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 2: THREAT ANALYZER
-           ===================================================================== -->
-      <section id="view-analyzer" class="tab-view">
-        <div class="grid-2col">
-          <!-- Manual Flow Parameter Sandbox -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Manual Single-Flow Classification</div>
-              <span class="badge badge-info">Real Model Evaluation</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-              Configure individual network flow parameters or select a sample attack prototype to evaluate single-flow neural ensemble and Isolation Forest inference.
-            </p>
-            <div class="btn-group" style="margin-bottom: 16px;">
-              <button class="btn btn-secondary" id="btnSampleBenign" type="button">🟢 Sample Normal</button>
-              <button class="btn btn-secondary" id="btnSampleFtpPatator" type="button">🔴 Sample FTP-Patator</button>
-              <button class="btn btn-secondary" id="btnSampleSshPatator" type="button">🔴 Sample SSH-Patator</button>
-            </div>
-
-            <form id="flowAnalyzerForm">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <div class="form-group">
-                  <label>Source IP</label>
-                  <input type="text" class="form-input" id="flowSrcIp" value="172.16.0.1">
-                </div>
-                <div class="form-group">
-                  <label>Destination IP</label>
-                  <input type="text" class="form-input" id="flowDstIp" value="192.168.10.50">
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <div class="form-group">
-                  <label>Source Port</label>
-                  <input type="number" class="form-input" id="flowSrcPort" value="45120">
-                </div>
-                <div class="form-group">
-                  <label>Destination Port</label>
-                  <input type="number" class="form-input" id="flowDstPort" value="21">
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <div class="form-group">
-                  <label>Packets/s (Threshold: 500k)</label>
-                  <input type="number" class="form-input" id="flowPackets" value="650000">
-                </div>
-                <div class="form-group">
-                  <label>Bytes/s (Threshold: 1.84M)</label>
-                  <input type="number" class="form-input" id="flowBytes" value="2500000">
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                <div class="form-group">
-                  <label>SYN Flags (>= 1)</label>
-                  <input type="number" class="form-input" id="flowSyn" value="2">
-                </div>
-                <div class="form-group">
-                  <label>Duration μs (&lt; 4)</label>
-                  <input type="number" class="form-input" id="flowDuration" value="2000">
-                </div>
-                <div class="form-group">
-                  <label>Flows in Set (> 12)</label>
-                  <input type="number" class="form-input" id="flowCount" value="25">
-                </div>
-              </div>
-
-              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 8px;">
-                ⚡ Classify Single Flow via Deep Neural Ensemble
-              </button>
-            </form>
-
-            <!-- Manual Flow Prediction Verdict Box -->
-            <div id="verdictBox" class="verdict-box normal" style="margin-top: 20px;">
-              <div class="verdict-label-group">
-                <h3>Manual Single-Flow Verdict</h3>
-                <div class="verdict-title" id="verdictTitle">NORMAL</div>
-                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-                  Dominant Prototype: <strong id="verdictDominantBp" style="color: var(--text-primary)">bp_01 (0.0000)</strong> |
-                  Severity: <span class="badge badge-normal" id="verdictSeverityBadge">LOW</span>
-                </div>
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 6px;" id="verdictPredictedClass">Benign Network Traffic</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; max-width: 650px; line-height: 1.4;" id="verdictReason">Awaiting manual flow classification. Select a sample prototype above or enter custom flow parameters, then click 'Classify Single Flow'.</div>
-              </div>
-
-              <div class="verdict-meters" style="min-width: 220px;">
-                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Ensemble Confidence</div>
-                <div class="confidence-val" id="verdictConfidence">0.00%</div>
-
-                <!-- Submodel probability breakdown for transparency -->
-                <div style="margin-top: 8px; font-size: 11px; text-align: left;">
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>FCNN:</span> <strong id="valFcnn">0.0%</strong>
-                  </div>
-                  <div style="background: var(--bg-card); height: 4px; border-radius: 2px; overflow: hidden; margin-bottom: 6px;">
-                    <div id="meterFcnn" style="width: 0%; height: 100%; background: var(--accent-cyan); transition: width 0.3s;"></div>
-                  </div>
-
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>1D-CNN:</span> <strong id="valCnn">0.0%</strong>
-                  </div>
-                  <div style="background: var(--bg-card); height: 4px; border-radius: 2px; overflow: hidden; margin-bottom: 6px;">
-                    <div id="meterCnn" style="width: 0%; height: 100%; background: var(--accent-amber); transition: width 0.3s;"></div>
-                  </div>
-
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>LSTM:</span> <strong id="valLstm">0.0%</strong>
-                  </div>
-                  <div style="background: var(--bg-card); height: 4px; border-radius: 2px; overflow: hidden;">
-                    <div id="meterLstm" style="width: 0%; height: 100%; background: var(--accent-purple); transition: width 0.3s;"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Multi-format File Ingestion (CSV, TXT, PDF) -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Uploaded Dataset Batch Classification</div>
-              <span class="badge badge-info">CSV • TXT • PDF</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-              Upload multi-record network captures (CSV, TXT, LOG, PDF) for automated end-to-end batch ingestion, threat triage, and anomaly scoring.
-            </p>
-
-            <div class="dropzone-box" id="uploadDropzone">
-              <div class="dropzone-icon">📁</div>
-              <p><strong>Click or drag & drop files here</strong></p>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Supports .csv, .txt, .log, .pdf</p>
-              <input type="file" id="fileInput" accept=".csv,.txt,.log,.pdf" style="display: none;">
-            </div>
-
-            <div id="uploadStatus" style="margin-top: 16px; font-size: 13px; font-family: var(--font-mono);"></div>
-
-            <!-- Batch Telemetry Metrics & Campaign Table (Hidden until uploaded) -->
-            <div id="batchMetricsPanel" style="display: none; margin-top: 16px;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin-bottom: 20px;">
-                <div class="card" style="padding: 10px 14px; background: rgba(0, 229, 255, 0.05); border-left: 3px solid var(--accent-cyan); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;" id="metricUploadedFlowsLabel">Uploaded Flows</div>
-                  <div id="metricUploadedFlows" style="font-size: 20px; font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(187, 134, 252, 0.05); border-left: 3px solid var(--accent-purple); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;" id="metricGeneratedEventSetsLabel">Event Sets</div>
-                  <div id="metricGeneratedEventSets" style="font-size: 20px; font-weight: 700; color: var(--accent-purple); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(0, 230, 118, 0.05); border-left: 3px solid var(--accent-green); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Normal Sets</div>
-                  <div id="metricNormalSets" style="font-size: 20px; font-weight: 700; color: var(--accent-green); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(255, 23, 68, 0.05); border-left: 3px solid var(--accent-red); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Known Threats</div>
-                  <div id="metricKnownThreatCampaigns" style="font-size: 20px; font-weight: 700; color: var(--accent-red); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(255, 171, 0, 0.05); border-left: 3px solid var(--accent-amber); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Unknown Anomalous</div>
-                  <div id="metricUnknownAnomalousCampaigns" style="font-size: 20px; font-weight: 700; color: var(--accent-amber); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(255, 61, 0, 0.05); border-left: 3px solid var(--accent-red); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Alert Campaigns</div>
-                  <div id="metricUniqueCampaigns" style="font-size: 20px; font-weight: 700; color: var(--accent-red); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(120, 144, 156, 0.05); border-left: 3px solid var(--text-secondary); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Invalid Records</div>
-                  <div id="metricInvalidRecords" style="font-size: 20px; font-weight: 700; color: var(--text-secondary); font-family: var(--font-mono);">0</div>
-                </div>
-                <div class="card" style="padding: 10px 14px; background: rgba(120, 144, 156, 0.05); border-left: 3px solid var(--text-secondary); margin: 0;">
-                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Duration</div>
-                  <div id="metricProcessingDuration" style="font-size: 20px; font-weight: 700; color: var(--text-primary); font-family: var(--font-mono);">0 ms</div>
-                </div>
-              </div>
-
-              <!-- ===================================================================
-                   SECTION A: KNOWN THREATS / ANN ALERTS
-                   =================================================================== -->
-              <div class="threat-classification-section" id="sectionKnownThreats" style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; background: rgba(255, 23, 68, 0.03);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <div>
-                    <h4 style="margin: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-red);">
-                      🚨 Section A: Known Threats / ANN Alerts
-                    </h4>
-                    <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">
-                      Supervised Artificial Neural Network (FCNN, 1D-CNN, LSTM) ensemble detections matching calibrated threat profiles.
-                    </p>
-                  </div>
-                  <span class="badge badge-threat" id="badgeKnownThreatsCount">0 Known Threats</span>
-                </div>
-                <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-                  <table class="soc-table" id="knownThreatsTable">
-                    <thead>
-                      <tr>
-                        <th>Event Set ID</th>
-                        <th>Campaign ID</th>
-                        <th>Source Host</th>
-                        <th>Destination Host</th>
-                        <th>Window Time Range</th>
-                        <th>ANN Confidence</th>
-                        <th>Severity</th>
-                        <th>Attributed Flows</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-                <div class="pagination-bar" id="paginationKnownThreats" style="display: none; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
-                  <span id="pageInfoKnownThreats">Showing 0-0 of 0</span>
-                  <div style="display: flex; gap: 6px; align-items: center;">
-                    <button class="btn btn-secondary" id="btnPrevKnownThreats" type="button" style="padding: 2px 10px; font-size: 11px;">Prev</button>
-                    <span id="pageNumKnownThreats" style="font-weight: 600; color: var(--text-primary);">Page 1 of 1</span>
-                    <button class="btn btn-secondary" id="btnNextKnownThreats" type="button" style="padding: 2px 10px; font-size: 11px;">Next</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ===================================================================
-                   SECTION B: UNKNOWN ANOMALOUS ACTIVITY
-                   =================================================================== -->
-              <div class="threat-classification-section" id="sectionUnknownAnomalies" style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; background: rgba(255, 171, 0, 0.03);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <div>
-                    <h4 style="margin: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-amber);">
-                      ⚠️ Section B: Unknown Anomalous Activity
-                    </h4>
-                    <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">
-                      Unsupervised Isolation Forest detection identifying statistical out-of-distribution traffic shifts.
-                    </p>
-                  </div>
-                  <span class="badge badge-warning" id="badgeUnknownAnomaliesCount">0 Anomalies</span>
-                </div>
-
-                <!-- Explicit SOC Mandatory Disclaimer Banner -->
-                <div class="soc-disclaimer-box" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(255, 171, 0, 0.08); border-left: 3px solid var(--accent-amber); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-primary);">
-                  <strong>Notice:</strong> <em>Unknown Anomalous means unusual network behavior identified by anomaly detection. It is not a confirmed zero-day attack.</em>
-                </div>
-
-                <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-                  <table class="soc-table" id="unknownAnomaliesTable">
-                    <thead>
-                      <tr>
-                        <th>Event Set ID</th>
-                        <th>Campaign ID</th>
-                        <th>Source Host</th>
-                        <th>Destination Host</th>
-                        <th>Window Time Range</th>
-                        <th>Anomaly Score</th>
-                        <th>Severity</th>
-                        <th>Attributed Flows</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-                <div class="pagination-bar" id="paginationUnknownAnomalies" style="display: none; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
-                  <span id="pageInfoUnknownAnomalies">Showing 0-0 of 0</span>
-                  <div style="display: flex; gap: 6px; align-items: center;">
-                    <button class="btn btn-secondary" id="btnPrevUnknownAnomalies" type="button" style="padding: 2px 10px; font-size: 11px;">Prev</button>
-                    <span id="pageNumUnknownAnomalies" style="font-weight: 600; color: var(--text-primary);">Page 1 of 1</span>
-                    <button class="btn btn-secondary" id="btnNextUnknownAnomalies" type="button" style="padding: 2px 10px; font-size: 11px;">Next</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ===================================================================
-                   SECTION C: LOGICAL SECURITY CAMPAIGNS (TRANSITIVE COALESCENCE)
-                   =================================================================== -->
-              <div class="threat-classification-section" id="sectionCampaigns" style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; background: rgba(0, 229, 255, 0.03);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <div>
-                    <h4 style="margin: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-cyan);">
-                      🛡️ Section C: Logical Security Campaigns (Transitive Coalescence)
-                    </h4>
-                    <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">
-                      Contiguous and overlapping temporal alert windows coalesced into unified multi-window attack campaigns.
-                    </p>
-                  </div>
-                  <span class="badge badge-threat" id="badgeCampaignCount">0 Campaigns</span>
-                </div>
-                <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-                  <table class="soc-table" id="campaignResultsTable">
-                    <thead>
-                      <tr>
-                        <th>Campaign ID</th>
-                        <th>Source IP</th>
-                        <th>Destination IP</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Verdict</th>
-                        <th>Confidence</th>
-                        <th>Windows</th>
-                        <th>Attributed Flows</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-                <div class="pagination-bar" id="paginationCampaigns" style="display: none; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
-                  <span id="pageInfoCampaigns">Showing 0-0 of 0</span>
-                  <div style="display: flex; gap: 6px; align-items: center;">
-                    <button class="btn btn-secondary" id="btnPrevCampaigns" type="button" style="padding: 2px 10px; font-size: 11px;">Prev</button>
-                    <span id="pageNumCampaigns" style="font-weight: 600; color: var(--text-primary);">Page 1 of 1</span>
-                    <button class="btn btn-secondary" id="btnNextCampaigns" type="button" style="padding: 2px 10px; font-size: 11px;">Next</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Individual Evaluated Sliding Windows Details (Collapsible Audit Trail) -->
-              <details style="margin-top: 14px;">
-                <summary style="cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-secondary); outline: none;">
-                  🔍 View Evaluated Sliding Windows Audit Log (<span id="badgeWindowCount">0 Windows</span>)
-                </summary>
-                <div class="table-responsive" style="margin-top: 12px; max-height: 320px; overflow-y: auto;">
-                  <table class="soc-table" id="batchResultsTable">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Source Host</th>
-                        <th>Destination Host</th>
-                        <th>Verdict</th>
-                        <th>Confidence</th>
-                        <th>Severity</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-              </details>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 3: EVENT PROFILES
-           ===================================================================== -->
-      <section id="view-profiles" class="tab-view">
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div class="card-title">The 5 Derived Security Event Threshold Rules (Phase 3)</div>
-            <span class="badge badge-info">Fitted on Training Data Only</span>
-          </div>
-          <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 12px;">
-            Derived thresholds strictly fitted on the training split to eliminate data leakage. Network flows are evaluated against these 5 behavioral event flags per host-pair window.
-          </p>
-          <div class="table-responsive">
-            <table class="soc-table" id="thresholdsTable">
-              <thead>
-                <tr>
-                  <th>Event Name</th>
-                  <th>Level</th>
-                  <th>Source Feature</th>
-                  <th>Comparison</th>
-                  <th>Training Threshold</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Greedy Non-Redundant Basepoint Vectors (Cosine Threshold &lt; 0.95)</div>
-            <span class="badge badge-info">8 Prototype Vectors</span>
-          </div>
-          <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 12px;">
-            Deterministic prototype vectors extracted from training TF-IDF profiles. Every incoming window event set is represented as an 8D cosine similarity spectrum against these centroids.
-          </p>
-          <div class="table-responsive">
-            <table class="soc-table" id="basepointsTable">
-              <thead>
-                <tr>
-                  <th>Basepoint</th>
-                  <th>HIGH_FLOW_RATE</th>
-                  <th>HIGH_PACKET_RATE</th>
-                  <th>HIGH_BYTE_RATE</th>
-                  <th>SYN_ACTIVITY</th>
-                  <th>SHORT_REPEATED</th>
-                  <th>Max Cosine to Prior</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 4: MODEL HUB
-           ===================================================================== -->
-      <section id="view-models" class="tab-view">
-        <!-- Evaluation A: Friday Unseen Attacks -->
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Evaluation A: Friday Unseen Attacks Under Domain Shift (569,099 Event Sets)</div>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Tested against zero-day and unobserved attack families: Bot, PortScan, DDoS (Temporal &amp; Network Domain Shift)</p>
-            </div>
-            <span class="badge badge-warning">Unseen Attacks • Domain Shift</span>
-          </div>
-          <div style="background: rgba(255, 171, 0, 0.08); border-left: 3px solid var(--accent-amber); padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 12px; color: var(--text-secondary);">
-            <strong style="color: var(--accent-amber);">⚠️ Methodological Note:</strong> Friday test traffic features severe class imbalance (1 : 8,022 attack ratio; 1,196 attacks out of 569,099 event sets). Because normal traffic comprises &gt;99.7% of events, raw accuracy alone (&gt;98%) is misleading. SIEM efficacy relies on <strong>Balanced Accuracy, Recall, and False Positive Rate</strong>.
-          </div>
-          <div class="table-responsive">
-            <table class="soc-table" id="benchmarkTableUnseen">
-              <thead>
-                <tr>
-                  <th>Model Architecture</th>
-                  <th>Threshold (τ)</th>
-                  <th>Accuracy</th>
-                  <th>Balanced Acc</th>
-                  <th>Recall</th>
-                  <th>Precision</th>
-                  <th>F1-Score</th>
-                  <th>PR-AUC</th>
-                  <th>ROC-AUC</th>
-                  <th>FPR</th>
-                  <th>Confusion Matrix</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Evaluation B: Tuesday Control (Known Attacks) -->
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Evaluation B: Tuesday Control — Known Attacks In-Distribution (42,189 Event Sets)</div>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Held-out known attack blocks (FTP-Patator, SSH-Patator) evaluating in-distribution baseline retention</p>
-            </div>
-            <span class="badge badge-normal">Known Attack Control Baseline</span>
-          </div>
-          <div class="table-responsive">
-            <table class="soc-table" id="benchmarkTableControl">
-              <thead>
-                <tr>
-                  <th>Model Architecture</th>
-                  <th>Threshold (τ)</th>
-                  <th>Accuracy</th>
-                  <th>Balanced Acc</th>
-                  <th>Recall</th>
-                  <th>Precision</th>
-                  <th>F1-Score</th>
-                  <th>PR-AUC</th>
-                  <th>ROC-AUC</th>
-                  <th>FPR</th>
-                  <th>Confusion Matrix</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="grid-2col">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Comparative Performance Metrics (Friday Unseen Domain Shift)</div>
-              <span class="badge badge-info">Evaluation A Comparison</span>
-            </div>
-            <div style="height: 300px; position: relative;">
-              <canvas id="chartModelBenchmarks"></canvas>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Soft-Voting Ensemble Configuration &amp; Calibrated Thresholds</div>
-              <span class="badge badge-info">SOC Dynamic Tuning</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-              Tune individual model voting weights and unified alert threshold. Calibrated specifically for Experiment B.
-            </p>
-            <div class="form-group">
-              <label>FCNN Weight: <span class="slider-val" id="valWeightFcnn">0.33</span> (Calibrated Submodel τ = 0.8582)</label>
-              <div class="slider-container">
-                <input type="range" id="sliderWeightFcnn" min="0" max="1" step="0.05" value="0.33">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>1D-CNN Weight: <span class="slider-val" id="valWeightCnn">0.33</span> (Calibrated Submodel τ = 0.3439)</label>
-              <div class="slider-container">
-                <input type="range" id="sliderWeightCnn" min="0" max="1" step="0.05" value="0.33">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>LSTM Weight: <span class="slider-val" id="valWeightLstm">0.33</span> (Calibrated Submodel τ = 0.7663)</label>
-              <div class="slider-container">
-                <input type="range" id="sliderWeightLstm" min="0" max="1" step="0.05" value="0.33">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Ensemble Alert Threshold (τ): <span class="slider-val" id="valThreshold">0.6561</span></label>
-              <div class="slider-container">
-                <input type="range" id="sliderThreshold" min="0.10" max="0.99" step="0.005" value="0.6561">
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px;">
-              <button class="btn btn-primary" id="btnApplyEnsemble">💾 Apply Ensemble Parameters</button>
-              <span style="font-size: 11px; color: var(--text-muted);">Isolation Forest τ = -0.012676</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 5: ANOMALY DETECTION (UNSUPERVISED ISOLATION FOREST)
-           ===================================================================== -->
-      <section id="view-anomaly" class="tab-view">
-        <div class="grid-cards">
-          <div class="card">
-            <div class="card-label">Training Profiles</div>
-            <div class="card-value" id="kpiIsoTrain">1,997,246</div>
-            <div class="card-subtext highlight-cyan">Unsupervised Normal Profiles</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Outlier Test Recall</div>
-            <div class="card-value" id="kpiIsoRecall">6.19%</div>
-            <div class="card-subtext highlight-green" id="kpiIsoRecallSub">Friday Unseen (74/1,196)</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Test ROC-AUC</div>
-            <div class="card-value" id="kpiIsoRoc">57.92%</div>
-            <div class="card-subtext highlight-purple" id="kpiIsoRocSub">Unseen Domain Shift</div>
-          </div>
-          <div class="card">
-            <div class="card-label">False Positive Rate</div>
-            <div class="card-value" id="kpiIsoFpr">1.05%</div>
-            <div class="card-subtext highlight-green" id="kpiIsoFprSub">567,903 Normal Test Sets</div>
-          </div>
-        </div>
-
-        <div class="grid-2col" style="margin-top: 16px;">
-          <!-- Interactive Anomaly Sandbox -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Isolation Forest Anomaly Sandbox</div>
-              <span class="badge badge-info">Zero-Day Evaluation</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-              Test 8-dimensional profile vectors against the trained Isolation Forest (Threshold: <code id="isoThreshDisplay">-0.012676</code>).
-            </p>
-            <div class="btn-group" style="margin-bottom: 14px;">
-              <button class="btn btn-secondary" id="btnIsoNormal" type="button">🟢 Normal (All 0.0)</button>
-              <button class="btn btn-secondary" id="btnIsoAttack" type="button">🔴 Patator Vector</button>
-              <button class="btn btn-secondary" id="btnIsoOutlier" type="button">⚠️ Outlier Vector</button>
-            </div>
-
-            <form id="anomalyForm">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div class="form-group">
-                  <label>bp_01 (High Flow Rate)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp1" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_02 (Low Activity)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp2" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_03 (SYN Activity)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp3" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_04 (Medium Flow)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp4" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_05 (High Packet/Byte)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp5" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_06 (Burst Handshake)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp6" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_07 (Short Duration)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp7" value="0.0">
-                </div>
-                <div class="form-group">
-                  <label>bp_08 (Long Active Flow)</label>
-                  <input type="number" step="0.01" min="0" max="1" class="form-input" id="isoBp8" value="0.0">
-                </div>
-              </div>
-
-              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
-                🌲 Compute Anomaly Score
-              </button>
-            </form>
-
-            <div id="isoVerdictCard" class="verdict-box normal" style="margin-top: 14px; padding: 14px;">
-              <div class="verdict-label-group">
-                <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted)">Isolation Forest Verdict</div>
-                <div class="verdict-title" id="isoVerdictTitle" style="font-size: 20px;">NORMAL</div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-size: 11px; color: var(--text-secondary)">Anomaly Score / Cutoff</div>
-                <div style="font-size: 16px; font-weight: 700; font-family: var(--font-mono); color: var(--accent-cyan);" id="isoScoreValue">
-                  -0.1250 <span style="font-size: 12px; color: var(--text-muted)">/ -0.012676</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Unseen Test Confusion Matrix & Specs -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Friday Unseen Test Confusion Matrix (569,099 Profiles)</div>
-              <span class="badge badge-normal">Zero Data Leakage</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-secondary);">
-              Evaluated strictly on held-out Friday test traffic under domain shift (Bot, PortScan, DDoS).
-            </p>
-
-            <div class="confusion-matrix-grid">
-              <div class="cm-cell cm-header">Actual \ Pred</div>
-              <div class="cm-cell cm-header">Normal</div>
-              <div class="cm-cell cm-header">Anomaly</div>
-
-              <div class="cm-cell cm-header">Actual Normal</div>
-              <div class="cm-cell cm-tn">
-                <div>TN: 561,916</div>
-                <div style="font-size: 10px; color: var(--text-muted);">(98.95%)</div>
-              </div>
-              <div class="cm-cell cm-fp">
-                <div>FP: 5,987</div>
-                <div style="font-size: 10px; color: var(--text-muted);">(1.05%)</div>
-              </div>
-
-              <div class="cm-cell cm-header">Actual Attack</div>
-              <div class="cm-cell cm-fn">
-                <div>FN: 1,122</div>
-                <div style="font-size: 10px; color: var(--text-muted);">(93.81%)</div>
-              </div>
-              <div class="cm-cell cm-tp">
-                <div>TP: 74</div>
-                <div style="font-size: 10px; color: var(--text-muted);">(6.19%)</div>
-              </div>
-            </div>
-
-            <div style="margin-top: 14px; padding: 10px 12px; background: rgba(0, 230, 118, 0.08); border-left: 3px solid var(--accent-green); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-secondary);">
-              <strong style="color: var(--accent-green);">Tuesday Control Retention:</strong>
-              42,189 Profiles &bull; Recall: <strong>45.45%</strong> (10/22) &bull; FPR: <strong>1.37%</strong> (576/41,591) &bull; ROC-AUC: <strong>98.21%</strong>
-            </div>
-
-            <div style="margin-top: 12px; padding: 12px; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 12px; line-height: 1.6;">
-              <strong style="color: var(--accent-cyan);">SOC Hybrid Benefit:</strong>
-              While supervised neural models require prior labels of attack patterns, the Isolation Forest operates fully unsupervised, providing defense-in-depth against zero-day protocol exploits and stealthy low-and-slow brute-force attempts.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 6: DETECTION HISTORY
-           ===================================================================== -->
-      <section id="view-history" class="tab-view">
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Real-Time Sliding Window Threat Stream</div>
-              <p style="font-size: 12px; color: var(--text-muted)">Evaluated 10-minute sliding windows from the latest uploaded CSV</p>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span id="streamSessionBadge" class="badge badge-info" style="font-size: 11px;">No Active Upload</span>
-              <button class="btn btn-secondary" id="btnToggleStream" style="padding: 6px 12px; font-size: 12px;">⏸️ Pause Stream</button>
-            </div>
-          </div>
-          <div style="height: 200px; position: relative;">
-            <canvas id="chartLiveStream"></canvas>
-          </div>
-
-          <!-- Sliding Window Threat Stream Table -->
-          <div class="table-responsive" style="max-height: 360px; overflow-y: auto; margin-top: 14px;">
-            <table class="soc-table" id="liveStreamTable">
-              <thead>
-                <tr>
-                  <th>Window Time</th>
-                  <th>Window ID</th>
-                  <th>Event Set ID</th>
-                  <th>Campaign ID</th>
-                  <th>Flows</th>
-                  <th>SIEM Verdict</th>
-                  <th>Confidence</th>
-                  <th>Severity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="8" style="text-align: center; color: var(--text-muted); font-style: italic; padding: 24px;">
-                    No uploaded sliding-window stream available. Upload a network flow or event profile CSV to view stream telemetry.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Report Archive Card (Default View) -->
-        <div class="card" id="sessionHistoryCard">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Persistent Classification Reports & Ingestion Archive</div>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                Immutable historical classification reports preserved in SQLite across browser refreshes and server restarts.
-              </p>
-            </div>
-            <div class="btn-group">
-              <button class="btn btn-secondary" id="btnRefreshSessions" style="padding: 6px 12px; font-size: 12px;">🔄 Refresh Archive</button>
-              <button class="btn btn-secondary" id="btnExportSessionsJson" style="padding: 6px 12px; font-size: 12px;">📥 Export JSON</button>
-            </div>
-          </div>
-
-          <!-- Archive Filter Toolbar -->
-          <div class="history-filter-bar" style="margin-bottom: 14px;">
-            <label style="font-size: 13px; color: var(--text-secondary);">Search Report / Filename:</label>
-            <input type="text" class="form-input" id="sessionSearchInput" placeholder="Filter by filename or session ID..." style="width: 280px; padding: 6px 10px;">
-          </div>
-
-          <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
-            <table class="soc-table" id="sessionHistoryTable">
-              <thead>
-                <tr>
-                  <th>Session ID</th>
-                  <th>Filename / Source</th>
-                  <th>Upload Date</th>
-                  <th>Uploaded Flows</th>
-                  <th>Event Sets</th>
-                  <th>Normal</th>
-                  <th>Known Threats</th>
-                  <th>Unknown Anomalies</th>
-                  <th>Campaigns</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 12.5px; color: var(--text-secondary);">
-            <div id="sessionPaginationInfo">Showing reports...</div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn btn-secondary" id="btnPrevSessions" style="padding: 4px 10px; font-size: 12px;" disabled>Previous</button>
-              <button class="btn btn-secondary" id="btnNextSessions" style="padding: 4px 10px; font-size: 12px;" disabled>Next</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Detailed Classification Report Panel (Hidden until 'View Report' is clicked) -->
-        <div class="card" id="sessionReportPanel" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button class="btn btn-secondary" id="btnBackToHistory" style="padding: 6px 14px; font-size: 13px;">
-                ← Back to Report Archive
-              </button>
-              <div>
-                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);" id="reportHeaderFilename">
-                  Report Detail
-                </h3>
-                <span style="font-size: 12px; color: var(--text-muted);" id="reportHeaderMeta">Session ID &amp; Timestamp</span>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn btn-secondary" id="btnExportSingleReportJson" style="padding: 6px 12px; font-size: 12px;">📥 Export Report JSON</button>
-              <button class="btn btn-threat" id="btnDeleteCurrentReport" style="padding: 6px 12px; font-size: 12px;">🗑️ Delete Report</button>
-            </div>
-          </div>
-
-          <!-- Report Metric Cards -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px;">
-            <div class="card" style="padding: 10px 14px; background: rgba(0, 229, 255, 0.05); border-left: 3px solid var(--accent-cyan); margin: 0;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Uploaded Flows</div>
-              <div id="repMetricFlows" style="font-size: 20px; font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">0</div>
-            </div>
-            <div class="card" style="padding: 10px 14px; background: rgba(187, 134, 252, 0.05); border-left: 3px solid var(--accent-purple); margin: 0;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Event Sets</div>
-              <div id="repMetricSets" style="font-size: 20px; font-weight: 700; color: var(--accent-purple); font-family: var(--font-mono);">0</div>
-            </div>
-            <div class="card" style="padding: 10px 14px; background: rgba(0, 230, 118, 0.05); border-left: 3px solid var(--accent-green); margin: 0;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Normal Sets</div>
-              <div id="repMetricNormal" style="font-size: 20px; font-weight: 700; color: var(--accent-green); font-family: var(--font-mono);">0</div>
-            </div>
-            <div class="card" style="padding: 10px 14px; background: rgba(255, 23, 68, 0.05); border-left: 3px solid var(--accent-red); margin: 0;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Known Threats</div>
-              <div id="repMetricThreats" style="font-size: 20px; font-weight: 700; color: var(--accent-red); font-family: var(--font-mono);">0</div>
-            </div>
-            <div class="card" style="padding: 10px 14px; background: rgba(255, 171, 0, 0.05); border-left: 3px solid var(--accent-amber); margin: 0;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Unknown Anomalous</div>
-              <div id="repMetricAnomalies" style="font-size: 20px; font-weight: 700; color: var(--accent-amber); font-family: var(--font-mono);">0</div>
-            </div>
-            <div class="card" style="padding: 10px 14px; background: rgba(255, 61, 0, 0.05); border-left: 3px solid var(--accent-red); margin: 0;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Alert Campaigns</div>
-              <div id="repMetricCampaigns" style="font-size: 20px; font-weight: 700; color: var(--accent-red); font-family: var(--font-mono);">0</div>
-            </div>
-          </div>
-
-          <!-- Model Inference Breakdown -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 24px;">
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">FCNN Confidence</div>
-              <div id="repModelFcnn" style="font-size: 16px; font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono); margin-top: 4px;">0.0%</div>
-            </div>
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">1D-CNN Confidence</div>
-              <div id="repModelCnn" style="font-size: 16px; font-weight: 700; color: var(--accent-amber); font-family: var(--font-mono); margin-top: 4px;">0.0%</div>
-            </div>
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">LSTM Confidence</div>
-              <div id="repModelLstm" style="font-size: 16px; font-weight: 700; color: var(--accent-purple); font-family: var(--font-mono); margin-top: 4px;">0.0%</div>
-            </div>
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Soft-Voting Ensemble</div>
-              <div id="repModelEns" style="font-size: 16px; font-weight: 700; color: var(--accent-green); font-family: var(--font-mono); margin-top: 4px;">0.0%</div>
-            </div>
-          </div>
-
-          <!-- Section A: Known Threats -->
-          <div style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; background: rgba(255, 23, 68, 0.03);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <div>
-                <h4 style="margin: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-red);">
-                  🚨 Section A: Known Threats / ANN Alerts
-                </h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">
-                  Supervised ANN ensemble alert windows matching known threat patterns.
-                </p>
-              </div>
-              <span class="badge badge-threat" id="repBadgeKnownThreats">0 Known Threats</span>
-            </div>
-            <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-              <table class="soc-table" id="reportKnownThreatsTable">
-                <thead>
-                  <tr>
-                    <th>Event Set ID</th>
-                    <th>Campaign ID</th>
-                    <th>Source Host</th>
-                    <th>Destination Host</th>
-                    <th>Window Time</th>
-                    <th>ANN Confidence</th>
-                    <th>Severity</th>
-                    <th>Attributed Flows</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Section B: Unknown Anomalies -->
-          <div style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; background: rgba(255, 171, 0, 0.03);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <div>
-                <h4 style="margin: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-amber);">
-                  ⚠️ Section B: Unknown Anomalous Activity
-                </h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">
-                  Unsupervised Isolation Forest statistical out-of-distribution shifts.
-                </p>
-              </div>
-              <span class="badge badge-warning" id="repBadgeUnknownAnomalies">0 Anomalies</span>
-            </div>
-
-            <!-- Mandatory SOC Disclaimer Banner -->
-            <div class="soc-disclaimer-box" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(255, 171, 0, 0.08); border-left: 3px solid var(--accent-amber); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-primary);">
-              <strong>Notice:</strong> <em>Unknown Anomalous means unusual network behavior identified by anomaly detection. It is not a confirmed zero-day attack.</em>
-            </div>
-
-            <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-              <table class="soc-table" id="reportUnknownAnomaliesTable">
-                <thead>
-                  <tr>
-                    <th>Event Set ID</th>
-                    <th>Campaign ID</th>
-                    <th>Source Host</th>
-                    <th>Destination Host</th>
-                    <th>Window Time</th>
-                    <th>Anomaly Score</th>
-                    <th>Severity</th>
-                    <th>Attributed Flows</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Section C: Logical Security Campaigns -->
-          <div style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; background: rgba(0, 229, 255, 0.03);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <div>
-                <h4 style="margin: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-cyan);">
-                  🛡️ Section C: Logical Security Campaigns (Transitive Coalescence)
-                </h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">
-                  Logical attack campaigns coalesced transitively across contiguous sliding windows.
-                </p>
-              </div>
-              <span class="badge badge-threat" id="repBadgeCampaigns">0 Campaigns</span>
-            </div>
-            <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-              <table class="soc-table" id="reportCampaignsTable">
-                <thead>
-                  <tr>
-                    <th>Campaign ID</th>
-                    <th>Source IP</th>
-                    <th>Destination IP</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Verdict</th>
-                    <th>Confidence</th>
-                    <th>Windows</th>
-                    <th>Attributed Flows</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Collapsible All Detections Audit Trail -->
-          <details style="margin-top: 14px;">
-            <summary style="cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-secondary); outline: none;">
-              🔍 Full Detection Event Stream (<span id="repBadgeAllDetections">0 Detections</span>)
-            </summary>
-            <div class="table-responsive" style="margin-top: 12px; max-height: 320px; overflow-y: auto;">
-              <table class="soc-table" id="reportAllDetectionsTable">
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Source Host</th>
-                    <th>Destination Host</th>
-                    <th>Verdict</th>
-                    <th>Confidence</th>
-                    <th>Severity</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 7: AI CYBERSECURITY ASSISTANT
-           ===================================================================== -->
-      <section id="view-assistant" class="tab-view">
-        <div class="chat-wrapper">
-          <div class="chat-header">
-            <div class="chat-header-title">
-              <span style="font-size: 22px;">🤖</span>
-              <div>
-                <div>AI SOC Cybersecurity Analyst</div>
-                <div style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Context-Aware Threat Intelligence & Defense Copilot</div>
-              </div>
-            </div>
-            <button class="btn btn-secondary" id="btnClearChat" style="padding: 6px 12px; font-size: 11.5px;">🧹 Reset Conversation</button>
-          </div>
-
-          <div class="chat-messages" id="chatMessages">
-            <div class="chat-msg assistant">
-              <div class="chat-avatar">🤖</div>
-              <div class="chat-bubble">
-                <h3>Welcome to the AI SIEM Cybersecurity Copilot</h3>
-                <p>I am your dedicated analyst for the <strong>AI-Based SIEM Threat Detection System</strong> trained on the CICIDS2017 dataset.</p>
-                <p style="margin-top: 6px;">You can ask me about:</p>
-                <ul style="margin: 6px 0 6px 20px;">
-                  <li>Patator FTP & SSH brute-force attack mechanics and indicators</li>
-                  <li>How the 10-minute sliding window and 8 prototype basepoints work</li>
-                  <li>Neural Ensemble (FCNN, 1D-CNN, LSTM) benchmarks and threshold calibration</li>
-                  <li>Unsupervised Isolation Forest zero-day anomaly detection</li>
-                  <li>Automated triage explanations and SOC threat detection workflows</li>
-                </ul>
-                <p style="margin-top: 8px; color: var(--text-muted); font-size: 12px;">Click any suggested prompt chip below or type your custom question.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Suggested Query Chips -->
-          <div class="chat-chips-area" id="chatChipsArea">
-            <button class="chip-btn" data-query="Explain FTP-Patator detection pattern">🔍 Explain FTP-Patator attack</button>
-            <button class="chip-btn" data-query="Why is False Positive Rate critical in SOC?">📉 Why FPR &lt; 0.70% matters</button>
-            <button class="chip-btn" data-query="How does Isolation Forest detect zero-day threats?">🌲 Isolation Forest mechanics</button>
-            <button class="chip-btn" data-query="What does dominant basepoint bp_01 mean?">🎯 Basepoints & TF-IDF vectors</button>
-            <button class="chip-btn" data-query="Explain soft-voting neural ensemble policy">🗳️ Ensemble voting policy</button>
-          </div>
-
-          <!-- Chat Input Bar -->
-          <form class="chat-input-bar" id="chatInputForm">
-            <input type="text" class="form-input" id="chatInputText" placeholder="Ask AI Cybersecurity Analyst anything about threats, models, or detection workflows..." autocomplete="off">
-            <button type="submit" class="btn btn-primary" id="btnSendChat">💬 Send Query</button>
-          </form>
-        </div>
-      </section>
-
-      <!-- =====================================================================
-           SECTION 8: ABOUT PROJECT
-           ===================================================================== -->
-      <section id="view-about" class="tab-view">
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div class="card-title">Project Overview & Academic Specification</div>
-            <span class="badge badge-info">College Capstone Project</span>
-          </div>
-          <h2 style="font-size: 18px; color: var(--accent-cyan); margin-bottom: 8px;">
-            AI-Based SIEM Cyber Threat Detection System using Artificial Neural Networks based on Event Profiles
-          </h2>
-          <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 14px;">
-            Modern Security Information and Event Management (SIEM) systems are overwhelmed by massive network flow volume, resulting in extreme alert fatigue when traditional rule-based or per-packet inspection systems operate at scale. This project implements an end-to-end, privacy-preserving, high-throughput AI SIEM detection pipeline that operates on <strong>Event Profiles</strong> rather than inspecting raw payloads.
-          </p>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px;">
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Dataset Specification</div>
-              <strong style="color: var(--accent-cyan);">CICIDS2017 Combined</strong> (All 8 Captures)
-            </div>
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Total Monitored Flows</div>
-              <strong style="color: var(--text-primary);">2,827,677 Flows</strong> (3,234,182 Event Sets)
-            </div>
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Partitioning Strategy</div>
-              <strong style="color: var(--accent-green);">4-Way Multi-Day Split</strong> (Train, Val, Unseen, Control)
-            </div>
-            <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Deep Learning Core</div>
-              <strong style="color: var(--accent-purple);">Ensemble (τ = 0.6561) + IF (τ = -0.0127)</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- End-to-End Pipeline Flow Diagram -->
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div class="card-title">End-to-End SIEM Architecture Pipeline</div>
-            <span class="badge badge-normal">Modular Pipeline</span>
-          </div>
-          <div class="arch-flow-diagram">
-            <div class="arch-step-card">
-              <div class="arch-step-icon">🌐</div>
-              <div class="arch-step-title">1. Raw Flows</div>
-              <div class="arch-step-desc">CICIDS2017 8-day dataset (2,827,677 flows, 3,234,182 sets)</div>
-            </div>
-            <div class="arch-arrow">➔</div>
-            <div class="arch-step-card">
-              <div class="arch-step-icon">⏱️</div>
-              <div class="arch-step-title">2. Sliding Windows</div>
-              <div class="arch-step-desc">10-minute host-pair window aggregation</div>
-            </div>
-            <div class="arch-arrow">➔</div>
-            <div class="arch-step-card">
-              <div class="arch-step-icon">📊</div>
-              <div class="arch-step-title">3. Derived Events</div>
-              <div class="arch-step-desc">5 behavioral threshold rules (HFR, HPR, HBR, SYN, SRC)</div>
-            </div>
-            <div class="arch-arrow">➔</div>
-            <div class="arch-step-card">
-              <div class="arch-step-icon">📐</div>
-              <div class="arch-step-title">4. TF-IDF & Basepoints</div>
-              <div class="arch-step-desc">8 greedy prototype centroids cosine similarity spectrum</div>
-            </div>
-            <div class="arch-arrow">➔</div>
-            <div class="arch-step-card">
-              <div class="arch-step-icon">🧠</div>
-              <div class="arch-step-title">5. Neural Ensemble</div>
-              <div class="arch-step-desc">FCNN + CNN + LSTM Soft-Voting Ensemble (τ = 0.6561)</div>
-            </div>
-            <div class="arch-arrow">➔</div>
-            <div class="arch-step-card">
-              <div class="arch-step-icon">🌲</div>
-              <div class="arch-step-title">6. Isolation Forest</div>
-              <div class="arch-step-desc">Unsupervised zero-day outlier detection (τ = -0.012676)</div>
-            </div>
-            <div class="arch-arrow">➔</div>
-            <div class="arch-step-card">
-              <div class="arch-step-icon">🛡️</div>
-              <div class="arch-step-title">7. Unified Triage</div>
-              <div class="arch-step-desc">Definitive verdict & unified triage telemetry</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Academic & Data Integrity Safeguards Audit -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Academic & Data Integrity Safeguards Audit</div>
-            <span class="badge badge-normal">Zero Data Leakage</span>
-          </div>
-          <div class="table-responsive">
-            <table class="soc-table">
-              <thead>
-                <tr>
-                  <th>Methodological Principle</th>
-                  <th>Implementation Strategy</th>
-                  <th>Integrity Verification</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Multi-Day Domain Shift Splitting</strong></td>
-                  <td>Strict 4-way temporal partition: Mon-Thu benign train (1,997k), Wed-Thu validation (625k), Fri unseen test (569k), Tue control test (42k).</td>
-                  <td><span class="badge badge-normal">PASS</span> Unseen attack families evaluated strictly on separate days.</td>
-                </tr>
-                <tr>
-                  <td><strong>Threshold Non-Leakage</strong></td>
-                  <td>Derived event quantiles, TF-IDF IDF weights, and basepoints fitted exclusively on training set.</td>
-                  <td><span class="badge badge-normal">PASS</span> Zero future-information leakage into validation or test splits.</td>
-                </tr>
-                <tr>
-                  <td><strong>Identity Protection</strong></td>
-                  <td>IP addresses and port numbers strictly excluded from neural network input vectors.</td>
-                  <td><span class="badge badge-normal">PASS</span> Prevents model from memorizing specific host IPs.</td>
-                </tr>
-                <tr>
-                  <td><strong>Cost-Sensitive Thresholds</strong></td>
-                  <td>Ensemble decision boundary calibrated on validation data (τ = 0.6561) to guarantee FPR &lt; 3.0% under severe class imbalance.</td>
-                  <td><span class="badge badge-normal">PASS</span> 2.71% FPR on Friday unseen test (1,196 attacks in 569,099 sets).</td>
-                </tr>
-                <tr>
-                  <td><strong>Dual Defense Verification</strong></td>
-                  <td>Supervised ensemble provides high confidence on known attacks (100% recall on Tuesday control); Isolation Forest catches out-of-distribution zero-days.</td>
-                  <td><span class="badge badge-normal">PASS</span> Defense-in-depth across both in-distribution and domain-shifted traffic.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- =========================================================================
-       FLOATING AI CYBERSECURITY ASSISTANT (VISIBLE ACROSS ALL 9 SECTIONS)
-       ========================================================================= -->
-  <button class="floating-chat-btn" id="floatingChatBtn" title="Open AI Cybersecurity Assistant">
-    <span style="font-size: 18px;">🤖</span>
-    <span>AI SOC Assistant</span>
-    <span class="pulsing-dot-green"></span>
-  </button>
-
-  <div class="floating-chat-panel" id="floatingChatPanel" style="display: none;">
-    <div class="floating-chat-header">
-      <div class="floating-chat-title">
-        <span style="font-size: 20px;">🤖</span>
-        <div>
-          <strong style="color: var(--text-primary); font-size: 14px;">AI Cybersecurity Assistant</strong>
-          <div style="font-size: 11px; color: var(--text-muted);">Real-Time SOC Intelligence</div>
-        </div>
-      </div>
       <div>
-        <button class="btn-icon" id="btnCloseFloatingChat" title="Close chat panel">✕</button>
+        <h1 id="pageTitle">SOC Overview</h1>
+        <p>AI-Powered Network Threat Detection System</p>
       </div>
+
+      <div class="status">
+        🟢 SYSTEM OPERATIONAL
+      </div>
+
     </div>
 
-    <div class="floating-chat-body" id="floatingChatMessages">
-      <div class="chat-msg assistant">
-        <div class="chat-avatar">🤖</div>
-        <div class="chat-bubble">
-          <h3>AI SOC Assistant Ready</h3>
-          <p>I am connected to your live SIEM inference engine. Click any question chip below or ask anything about your analysed traffic.</p>
+
+    <!-- DASHBOARD -->
+
+    <section id="dashboard" class="page active">
+
+      <div class="grid">
+
+        <div class="card">
+          <div class="card-title">TOTAL RECORDS</div>
+          <div class="number cyan" id="totalRecords">0</div>
         </div>
-      </div>
-    </div>
 
-    <div class="floating-chat-chips" id="floatingChatChips">
-      <button class="chip-btn" data-query="How many threats were detected in my latest analysis?">Threat count</button>
-      <button class="chip-btn" data-query="Show the detected attack categories.">Attack categories</button>
-      <button class="chip-btn" data-query="Why was this network flow classified as suspicious?">Why suspicious?</button>
-      <button class="chip-btn" data-query="Explain the anomaly detection result.">Anomaly result</button>
-      <button class="chip-btn" data-query="Compare the FCNN, CNN and LSTM predictions.">Compare models</button>
-      <button class="chip-btn" data-query="What actions should I take for this threat?">Recommended actions</button>
-    </div>
-
-    <form class="floating-chat-input-bar" id="floatingChatForm">
-      <input type="text" id="floatingChatInput" placeholder="Ask AI Analyst about detections or telemetry..." autocomplete="off">
-      <button type="submit" class="btn btn-primary" style="padding: 6px 14px; font-size: 12.5px;">Send</button>
-    </form>
-  </div>
-
-  <!-- Delete Session Confirmation Modal -->
-  <div class="soc-modal-backdrop" id="deleteSessionModal" style="display: none;">
-    <div class="soc-modal-box">
-      <div class="soc-modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 20px;">⚠️</span>
-          <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--accent-red);">
-            Delete Classification Report
-          </h3>
+        <div class="card">
+          <div class="card-title">NORMAL EVENTS</div>
+          <div class="number green" id="normalEvents">0</div>
         </div>
-        <button class="btn-icon" id="btnCloseDeleteModal" title="Cancel">✕</button>
+
+        <div class="card">
+          <div class="card-title">THREATS DETECTED</div>
+          <div class="number red" id="threatEvents">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">SYSTEM STATUS</div>
+          <div class="number green">OK</div>
+        </div>
+
       </div>
-      <div class="soc-modal-body">
-        <p style="font-size: 13.5px; color: var(--text-primary); margin-bottom: 12px; line-height: 1.5;">
-          Are you sure you want to permanently delete this classification report and its associated detection history?
+
+      <div class="card">
+
+        <h2 class="section-title">🛡️ AI SIEM Cyber Security Dashboard</h2>
+
+        <p style="color:#94a3b8; line-height:1.7;">
+          This system analyses network traffic and classifies records as
+          <b class="green">NORMAL</b> or
+          <b class="red">THREAT</b>.
         </p>
-        <div style="background: var(--bg-card); padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-red); margin-bottom: 14px; font-size: 12.5px;">
-          <div style="margin-bottom: 4px;"><strong>Filename:</strong> <span id="delModalFilename" style="color: var(--accent-cyan); font-family: var(--font-mono);">-</span></div>
-          <div><strong>Session ID:</strong> <code id="delModalSessionId" style="color: var(--text-secondary);">-</code></div>
-        </div>
-        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">
-          This action will permanently delete all records, detections, and campaigns associated with this session from the SQLite database. Other historical sessions will remain untouched.
-        </p>
-      </div>
-      <div class="soc-modal-footer">
-        <button class="btn btn-secondary" id="btnCancelDelete">Cancel</button>
-        <button class="btn btn-threat" id="btnConfirmDelete" style="background: var(--accent-red); color: #fff; font-weight: 600;">
-          Permanently Delete
+
+        <br>
+
+        <button class="primary" onclick="showPage('upload')">
+          📁 Upload Dataset
         </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Main ES6 Module Bootstrapper -->
-  <script type="module" src="/static/js/app.js"></script>
+      </div>
+
+    </section>
+
+
+    <!-- THREAT ANALYZER -->
+
+    <section id="analyzer" class="page">
+
+      <div class="card">
+
+        <h2 class="section-title">🔬 Manual Threat Analyzer</h2>
+
+        <div class="form-grid">
+
+          <div>
+            <label>Packets Per Second</label>
+            <input type="number" id="packets" value="100">
+          </div>
+
+          <div>
+            <label>Bytes Per Second</label>
+            <input type="number" id="bytes" value="1000">
+          </div>
+
+          <div>
+            <label>SYN Flags</label>
+            <input type="number" id="syn" value="0">
+          </div>
+
+          <div>
+            <label>Flow Count</label>
+            <input type="number" id="flows" value="1">
+          </div>
+
+        </div>
+
+        <br>
+
+        <button class="primary" onclick="analyzeThreat()">
+          ⚡ Analyze Network Traffic
+        </button>
+
+        <div id="verdict" class="verdict">
+
+          <h2 id="verdictTitle">NORMAL</h2>
+
+          <p id="verdictText">
+            No threat detected.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- UPLOAD -->
+
+    <section id="upload" class="page">
+
+      <div class="card">
+
+        <h2 class="section-title">📁 Upload Network Dataset</h2>
+
+        <label class="upload-box">
+
+          <div class="upload-icon">📂</div>
+
+          <h3>Click to Upload CSV File</h3>
+
+          <p style="color:#94a3b8; margin-top:10px;">
+            Upload a CSV containing Normal and Threat records
+          </p>
+
+          <input
+            type="file"
+            id="csvFile"
+            accept=".csv"
+            onchange="handleFile(event)"
+          >
+
+        </label>
+
+        <p id="fileStatus"
+           style="margin-top:20px;color:#94a3b8;">
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- HISTORY -->
+
+    <section id="history" class="page">
+
+      <div class="card">
+
+        <h2 class="section-title">📜 Detection History</h2>
+
+        <div class="table-container">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Record</th>
+                <th>Prediction</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="historyBody">
+
+              <tr>
+                <td colspan="4"
+                    style="text-align:center;color:#94a3b8;">
+                  No records analysed yet
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+
+    <section id="about" class="page">
+
+      <div class="card">
+
+        <h2 class="section-title">
+          ℹ️ About Our Project
+        </h2>
+
+        <p style="color:#94a3b8;line-height:1.8;">
+
+          AI SIEM Cyber Threat Detection System is designed to analyse
+          network traffic and identify suspicious activity.
+
+          <br><br>
+
+          The system classifies network events into:
+
+          <br><br>
+
+          🟢 <b>Normal</b> — Safe network activity
+
+          <br>
+
+          🔴 <b>Threat</b> — Suspicious or malicious activity
+
+          <br><br>
+
+          The frontend allows users to upload datasets,
+          analyse network records and view detection results.
+
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    let total = 0;
+    let normal = 0;
+    let threats = 0;
+
+
+    /* PAGE NAVIGATION */
+
+    function showPage(pageId, element) {
+
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+
+      document.getElementById(pageId)
+        .classList.add("active");
+
+
+      if (element) {
+
+        document.querySelectorAll(".nav-item").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        element.classList.add("active");
+      }
+
+
+      const titles = {
+
+        dashboard: "SOC Overview",
+        analyzer: "Threat Analyzer",
+        upload: "Upload Dataset",
+        history: "Detection History",
+        about: "About Project"
+
+      };
+
+
+      document.getElementById("pageTitle").innerText =
+        titles[pageId];
+
+    }
+
+
+    /* MANUAL THREAT ANALYSIS */
+
+    function analyzeThreat() {
+
+      const packets =
+        Number(document.getElementById("packets").value);
+
+      const bytes =
+        Number(document.getElementById("bytes").value);
+
+      const syn =
+        Number(document.getElementById("syn").value);
+
+      const flows =
+        Number(document.getElementById("flows").value);
+
+
+      const verdict =
+        document.getElementById("verdict");
+
+      const verdictTitle =
+        document.getElementById("verdictTitle");
+
+      const verdictText =
+        document.getElementById("verdictText");
+
+
+      total++;
+
+
+      /*
+       Temporary frontend rule.
+
+       Later replace this with your
+       Python ML model API.
+      */
+
+      const isThreat =
+        packets > 500000 ||
+        bytes > 1800000 ||
+        syn >= 2 ||
+        flows > 12;
+
+
+      if (isThreat) {
+
+        threats++;
+
+        verdict.className =
+          "verdict threat";
+
+        verdictTitle.innerText =
+          "🚨 THREAT DETECTED";
+
+        verdictText.innerText =
+          "Suspicious network behaviour detected.";
+
+        addHistory(
+          total,
+          "Manual Analysis",
+          "THREAT",
+          "🚨 ALERT"
+        );
+
+      }
+
+      else {
+
+        normal++;
+
+        verdict.className =
+          "verdict normal";
+
+        verdictTitle.innerText =
+          "🟢 NORMAL";
+
+        verdictText.innerText =
+          "Network traffic appears normal.";
+
+        addHistory(
+          total,
+          "Manual Analysis",
+          "NORMAL",
+          "SAFE"
+        );
+
+      }
+
+
+      updateDashboard();
+
+    }
+
+
+    /* CSV FILE */
+
+    function handleFile(event) {
+
+      const file = event.target.files[0];
+
+      if (!file) return;
+
+
+      document.getElementById("fileStatus").innerHTML =
+        "⏳ Reading: <b>" + file.name + "</b>";
+
+
+      const reader = new FileReader();
+
+
+      reader.onload = function(e) {
+
+        const text = e.target.result;
+
+        const lines =
+          text.split(/\r?\n/)
+              .filter(line => line.trim() !== "");
+
+
+        if (lines.length <= 1) {
+
+          document.getElementById("fileStatus").innerText =
+            "❌ CSV file has no data.";
+
+          return;
+        }
+
+
+        let fileNormal = 0;
+        let fileThreat = 0;
+
+
+        /*
+         Looks for words such as:
+         Normal
+         BENIGN
+         Threat
+         Attack
+         Malicious
+        */
+
+        for (let i = 1; i < lines.length; i++) {
+
+          const row =
+            lines[i].toLowerCase();
+
+
+          total++;
+
+
+          if (
+            row.includes("threat") ||
+            row.includes("attack") ||
+            row.includes("malicious")
+          ) {
+
+            threats++;
+            fileThreat++;
+
+
+            addHistory(
+              total,
+              "CSV Record " + i,
+              "THREAT",
+              "🚨 ALERT"
+            );
+
+          }
+
+          else {
+
+            normal++;
+            fileNormal++;
+
+
+            addHistory(
+              total,
+              "CSV Record " + i,
+              "NORMAL",
+              "SAFE"
+            );
+
+          }
+
+        }
+
+
+        updateDashboard();
+
+
+        document.getElementById("fileStatus").innerHTML =
+          "✅ <b>Dataset analysed successfully!</b><br><br>" +
+          "📊 Total Records: " + (lines.length - 1) + "<br>" +
+          "🟢 Normal: " + fileNormal + "<br>" +
+          "🔴 Threats: " + fileThreat;
+
+      };
+
+
+      reader.readAsText(file);
+
+    }
+
+
+    /* UPDATE DASHBOARD */
+
+    function updateDashboard() {
+
+      document.getElementById("totalRecords")
+        .innerText = total;
+
+      document.getElementById("normalEvents")
+        .innerText = normal;
+
+      document.getElementById("threatEvents")
+        .innerText = threats;
+
+    }
+
+
+    /* HISTORY */
+
+    function addHistory(number, record, prediction, status) {
+
+      const body =
+        document.getElementById("historyBody");
+
+
+      if (
+        body.innerText.includes("No records analysed yet")
+      ) {
+
+        body.innerHTML = "";
+
+      }
+
+
+      const row =
+        document.createElement("tr");
+
+
+      row.innerHTML = `
+
+        <td>${number}</td>
+
+        <td>${record}</td>
+
+        <td class="${
+          prediction === "THREAT"
+            ? "red"
+            : "green"
+        }">
+
+          ${prediction}
+
+        </td>
+
+        <td>${status}</td>
+
+      `;
+
+
+      body.prepend(row);
+
+    }
+
+  </script>
+
 </body>
 </html>
