@@ -55,15 +55,19 @@ app = FastAPI(
     description="Full-stack AI-based SIEM system for cyber threat detection using Artificial Neural Networks based on Event Profiles",
     version="1.0.0"
 )
+from fastapi.middleware.cors import CORSMiddleware
 
-# Enable CORS for external frontends or dev servers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://ai-siem-soc-frontend.onrender.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
 
