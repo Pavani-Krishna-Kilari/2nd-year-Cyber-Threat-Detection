@@ -1,0 +1,10 @@
+{
+  "model_weights": {
+    "fcnn": 0.3333333333333333,
+    "cnn": 0.3333333333333333,
+    "lstm": 0.3333333333333333
+  },
+  "optimal_threshold": 0.6561224489795918,
+  "validation_f1": 0.010008831321754489,
+  "calibration_split": "Thursday validation"
+}

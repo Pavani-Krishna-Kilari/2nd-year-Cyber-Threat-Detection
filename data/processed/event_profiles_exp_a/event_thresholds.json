@@ -1,0 +1,47 @@
+{
+  "HIGH_PACKET_RATE": {
+    "level": "flow",
+    "feature": "flow_packets_s",
+    "percentile": 95,
+    "comparison": "gt",
+    "threshold": 666666.7,
+    "n_training_values": 1955329,
+    "n_nonfinite_ignored": 0
+  },
+  "HIGH_BYTE_RATE": {
+    "level": "flow",
+    "feature": "flow_bytes_s",
+    "percentile": 95,
+    "comparison": "gt",
+    "threshold": 2178403.8,
+    "n_training_values": 1955329,
+    "n_nonfinite_ignored": 0
+  },
+  "SYN_ACTIVITY": {
+    "level": "flow",
+    "feature": "syn_flag_count",
+    "percentile": 95,
+    "comparison": "ge",
+    "threshold": 0.0,
+    "n_training_values": 1955329,
+    "n_nonfinite_ignored": 0
+  },
+  "SHORT_REPEATED_CONNECTIONS": {
+    "level": "flow",
+    "feature": "flow_duration",
+    "percentile": 5,
+    "comparison": "lt",
+    "threshold": 4.0,
+    "n_training_values": 1955329,
+    "n_nonfinite_ignored": 0
+  },
+  "HIGH_FLOW_RATE": {
+    "level": "event_set",
+    "feature": "flows in the source->destination event set",
+    "percentile": 95,
+    "comparison": "gt",
+    "threshold": 12.0,
+    "n_training_values": 1935461,
+    "n_nonfinite_ignored": 0
+  }
+}

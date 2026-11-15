@@ -1,0 +1,218 @@
+{
+  "source_file": "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+  "raw_sha256": "d74238e054023c8bd4d8056650463cadb25c100fb0e26ebd4272c07b5c022c4b",
+  "rows_loaded": 288602,
+  "rows_final": 288253,
+  "context_columns": [
+    "flow_id",
+    "source_ip",
+    "destination_ip",
+    "source_port",
+    "destination_port",
+    "protocol",
+    "timestamp"
+  ],
+  "feature_columns": [
+    "flow_duration",
+    "total_fwd_packets",
+    "total_backward_packets",
+    "total_length_of_fwd_packets",
+    "total_length_of_bwd_packets",
+    "fwd_packet_length_max",
+    "fwd_packet_length_min",
+    "fwd_packet_length_mean",
+    "fwd_packet_length_std",
+    "bwd_packet_length_max",
+    "bwd_packet_length_min",
+    "bwd_packet_length_mean",
+    "bwd_packet_length_std",
+    "flow_bytes_s",
+    "flow_packets_s",
+    "flow_iat_mean",
+    "flow_iat_std",
+    "flow_iat_max",
+    "flow_iat_min",
+    "fwd_iat_total",
+    "fwd_iat_mean",
+    "fwd_iat_std",
+    "fwd_iat_max",
+    "fwd_iat_min",
+    "bwd_iat_total",
+    "bwd_iat_mean",
+    "bwd_iat_std",
+    "bwd_iat_max",
+    "bwd_iat_min",
+    "fwd_psh_flags",
+    "fwd_header_length",
+    "bwd_header_length",
+    "fwd_packets_s",
+    "bwd_packets_s",
+    "min_packet_length",
+    "max_packet_length",
+    "packet_length_mean",
+    "packet_length_std",
+    "packet_length_variance",
+    "fin_flag_count",
+    "syn_flag_count",
+    "rst_flag_count",
+    "psh_flag_count",
+    "ack_flag_count",
+    "urg_flag_count",
+    "ece_flag_count",
+    "down_up_ratio",
+    "average_packet_size",
+    "avg_fwd_segment_size",
+    "avg_bwd_segment_size",
+    "fwd_header_length_1",
+    "subflow_fwd_packets",
+    "subflow_fwd_bytes",
+    "subflow_bwd_packets",
+    "subflow_bwd_bytes",
+    "init_win_bytes_forward",
+    "init_win_bytes_backward",
+    "act_data_pkt_fwd",
+    "min_seg_size_forward",
+    "active_mean",
+    "active_std",
+    "active_max",
+    "active_min",
+    "idle_mean",
+    "idle_std",
+    "idle_max",
+    "idle_min"
+  ],
+  "removed_constant_columns": [
+    "bwd_psh_flags",
+    "bwd_urg_flags",
+    "fwd_avg_bytes_bulk",
+    "fwd_avg_packets_bulk",
+    "fwd_avg_bulk_rate",
+    "bwd_avg_bytes_bulk",
+    "bwd_avg_packets_bulk",
+    "bwd_avg_bulk_rate"
+  ],
+  "targets": {
+    "target_binary": "BENIGN = 0, attack = 1",
+    "target_multiclass": {
+      "BENIGN": 0,
+      "Infiltration": 1
+    }
+  },
+  "timestamp": {
+    "order": "day_first",
+    "uncertain": false,
+    "hour_correction_applied": true
+  },
+  "window": {
+    "size_seconds": 600,
+    "step_seconds": 60
+  },
+  "split": {
+    "enabled": true,
+    "block_minutes": 20,
+    "train_fraction": 0.7,
+    "validation_fraction": 0.15,
+    "test_fraction": 0.15,
+    "random_seed": 42
+  },
+  "config_snapshot": {
+    "paths": {
+      "raw_dir": "data/raw",
+      "interim_dir": "data/interim",
+      "processed_dir": "data/processed",
+      "reports_dir": "reports"
+    },
+    "dataset": {
+      "name": "CICIDS2017",
+      "raw_files": "auto",
+      "encoding": "latin-1"
+    },
+    "labels": {
+      "benign_label": "BENIGN",
+      "attack_labels": [
+        "FTP-Patator",
+        "SSH-Patator",
+        "DoS Hulk",
+        "DoS GoldenEye",
+        "DoS slowloris",
+        "DoS Slowhttptest",
+        "Heartbleed",
+        "Web Attack - Brute Force",
+        "Web Attack - XSS",
+        "Web Attack - Sql Injection",
+        "Infiltration",
+        "Bot",
+        "PortScan",
+        "DDoS"
+      ],
+      "unknown_label_policy": "error"
+    },
+    "cleaning": {
+      "non_finite_strategy": "drop_rows",
+      "max_drop_fraction": 0.01,
+      "remove_duplicates": true,
+      "duplicate_keep": "first",
+      "remove_constant_columns": true,
+      "invalid_network_fields": "drop"
+    },
+    "timestamp": {
+      "date_order": "auto",
+      "expected_weekday": "auto",
+      "fallback_date_order": "day_first",
+      "hour_correction": "auto",
+      "max_unparseable_fraction": 0.001
+    },
+    "features": {
+      "context_columns": [
+        "flow_id",
+        "source_ip",
+        "destination_ip",
+        "source_port",
+        "destination_port",
+        "protocol",
+        "timestamp"
+      ]
+    },
+    "split": {
+      "enabled": true,
+      "block_minutes": 20,
+      "train_fraction": 0.7,
+      "validation_fraction": 0.15,
+      "test_fraction": 0.15,
+      "random_seed": 42
+    },
+    "output": {
+      "format": "csv",
+      "float_dtype": "float32",
+      "sample_rows": 1000
+    },
+    "window": {
+      "size_seconds": 600,
+      "step_seconds": 60
+    },
+    "models": {
+      "default_model": "FCNN"
+    },
+    "event_profiles": {
+      "grouping": "source_destination",
+      "input_file": "auto",
+      "output_dir": "data/processed/event_profiles",
+      "high_percentile": 95,
+      "short_percentile": 5,
+      "rare_event_types": 2,
+      "basepoints": 8,
+      "redundancy_threshold": 0.95,
+      "sublinear_tf": true,
+      "min_attack_flows": 1,
+      "min_attack_fraction": 0.0,
+      "trigger_share_warning": 0.1,
+      "comparisons": {
+        "HIGH_FLOW_RATE": "gt",
+        "HIGH_PACKET_RATE": "gt",
+        "HIGH_BYTE_RATE": "gt",
+        "SYN_ACTIVITY": "ge",
+        "SHORT_REPEATED_CONNECTIONS": "lt"
+      }
+    }
+  }
+}

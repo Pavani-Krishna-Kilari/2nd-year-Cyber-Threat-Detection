@@ -1,0 +1,23 @@
+{
+  "model": "Isolation Forest",
+  "model_type": "Isolation Forest",
+  "fitted_on": "train_benign_only",
+  "num_training_samples": 1997246,
+  "features": [
+    "bp_01",
+    "bp_02",
+    "bp_03",
+    "bp_04",
+    "bp_05",
+    "bp_06",
+    "bp_07",
+    "bp_08"
+  ],
+  "score_convention": "inverted_decision_function",
+  "score_formula": "-decision_function(X)",
+  "calibration_split": "Thursday validation benign only",
+  "calibration_rule": "99th_percentile_benign_validation",
+  "nominal_fpr_budget": 0.01,
+  "optimal_threshold": -0.012676391259280995,
+  "validation_benign_samples": 625223
+}

@@ -1,0 +1,26 @@
+{
+  "vocabulary": [
+    "HIGH_FLOW_RATE",
+    "HIGH_PACKET_RATE",
+    "HIGH_BYTE_RATE",
+    "SYN_ACTIVITY",
+    "SHORT_REPEATED_CONNECTIONS"
+  ],
+  "n_training_documents": 1997495,
+  "document_frequency": [
+    91545,
+    138280,
+    345600,
+    390160,
+    103563
+  ],
+  "idf": [
+    4.082808096940898,
+    3.670361828404231,
+    2.7543647446910633,
+    2.6330902006857273,
+    3.959459896046164
+  ],
+  "sublinear_tf": true,
+  "formula": "tf = 1+ln(count) if sublinear else count; idf = ln((1+N)/(1+df))+1; vector = L2_normalize(tf*idf)"
+}

@@ -1,0 +1,129 @@
+block_id,start,end,rows,attack_rows,stratum,split,source_dataset,experiment_b_split
+0,2017-07-07 15:30:00,2017-07-07 15:49:00,15550,0,BENIGN,train,Friday-WorkingHours-Afternoon-DDos,test
+1,2017-07-07 15:50:00,2017-07-07 16:09:00,124300,88459,DDoS,train,Friday-WorkingHours-Afternoon-DDos,test
+2,2017-07-07 16:10:00,2017-07-07 16:29:00,67553,39566,DDoS,train,Friday-WorkingHours-Afternoon-DDos,test
+3,2017-07-07 16:30:00,2017-07-07 16:49:00,9907,0,BENIGN,validation,Friday-WorkingHours-Afternoon-DDos,test
+4,2017-07-07 16:50:00,2017-07-07 17:02:00,8399,0,BENIGN,test,Friday-WorkingHours-Afternoon-DDos,test
+0,2017-07-07 13:00:00,2017-07-07 13:19:00,8030,7,PortScan,train,Friday-WorkingHours-Afternoon-PortScan,test
+1,2017-07-07 13:20:00,2017-07-07 13:39:00,19431,0,BENIGN,train,Friday-WorkingHours-Afternoon-PortScan,test
+2,2017-07-07 13:40:00,2017-07-07 13:59:00,15559,178,PortScan,train,Friday-WorkingHours-Afternoon-PortScan,test
+3,2017-07-07 14:00:00,2017-07-07 14:19:00,16818,187,PortScan,validation,Friday-WorkingHours-Afternoon-PortScan,test
+4,2017-07-07 14:20:00,2017-07-07 14:39:00,18282,0,BENIGN,train,Friday-WorkingHours-Afternoon-PortScan,test
+5,2017-07-07 14:40:00,2017-07-07 14:59:00,156196,138386,PortScan,test,Friday-WorkingHours-Afternoon-PortScan,test
+6,2017-07-07 15:00:00,2017-07-07 15:19:00,30400,11029,PortScan,train,Friday-WorkingHours-Afternoon-PortScan,test
+7,2017-07-07 15:20:00,2017-07-07 15:29:00,21379,9017,PortScan,train,Friday-WorkingHours-Afternoon-PortScan,test
+0,2017-07-07 08:59:00,2017-07-07 09:18:00,12010,0,BENIGN,train,Friday-WorkingHours-Morning,test
+1,2017-07-07 09:19:00,2017-07-07 09:38:00,15705,2,Bot,test,Friday-WorkingHours-Morning,test
+2,2017-07-07 09:39:00,2017-07-07 09:58:00,20589,0,BENIGN,train,Friday-WorkingHours-Morning,test
+3,2017-07-07 09:59:00,2017-07-07 10:18:00,26486,113,Bot,train,Friday-WorkingHours-Morning,test
+4,2017-07-07 10:19:00,2017-07-07 10:38:00,32978,638,Bot,train,Friday-WorkingHours-Morning,test
+5,2017-07-07 10:39:00,2017-07-07 10:58:00,13340,683,Bot,train,Friday-WorkingHours-Morning,test
+6,2017-07-07 10:59:00,2017-07-07 11:18:00,17768,98,Bot,train,Friday-WorkingHours-Morning,test
+7,2017-07-07 11:19:00,2017-07-07 11:38:00,20445,84,Bot,train,Friday-WorkingHours-Morning,test
+8,2017-07-07 11:39:00,2017-07-07 11:58:00,17112,84,Bot,validation,Friday-WorkingHours-Morning,test
+9,2017-07-07 11:59:00,2017-07-07 12:18:00,8917,79,Bot,test,Friday-WorkingHours-Morning,test
+10,2017-07-07 12:19:00,2017-07-07 12:38:00,3291,84,Bot,train,Friday-WorkingHours-Morning,test
+11,2017-07-07 12:39:00,2017-07-07 12:58:00,2216,84,Bot,validation,Friday-WorkingHours-Morning,test
+12,2017-07-07 12:59:00,2017-07-07 12:59:00,52,7,Bot,train,Friday-WorkingHours-Morning,test
+0,2017-07-03 08:55:58,2017-07-03 09:14:59,9609,0,BENIGN,train,Monday-WorkingHours,train
+1,2017-07-03 09:15:00,2017-07-03 09:34:59,26590,0,BENIGN,train,Monday-WorkingHours,train
+2,2017-07-03 09:35:00,2017-07-03 09:54:59,32143,0,BENIGN,train,Monday-WorkingHours,train
+3,2017-07-03 09:55:00,2017-07-03 10:14:59,31772,0,BENIGN,train,Monday-WorkingHours,train
+4,2017-07-03 10:15:00,2017-07-03 10:34:59,29048,0,BENIGN,train,Monday-WorkingHours,train
+5,2017-07-03 10:35:00,2017-07-03 10:54:59,25978,0,BENIGN,train,Monday-WorkingHours,train
+6,2017-07-03 10:55:00,2017-07-03 11:14:59,28658,0,BENIGN,train,Monday-WorkingHours,train
+7,2017-07-03 11:15:00,2017-07-03 11:34:59,28854,0,BENIGN,validation,Monday-WorkingHours,train
+8,2017-07-03 11:35:00,2017-07-03 11:54:59,27034,0,BENIGN,train,Monday-WorkingHours,train
+9,2017-07-03 11:55:00,2017-07-03 12:14:59,27595,0,BENIGN,validation,Monday-WorkingHours,train
+10,2017-07-03 12:15:00,2017-07-03 12:34:59,19902,0,BENIGN,train,Monday-WorkingHours,train
+11,2017-07-03 12:35:00,2017-07-03 12:54:59,15401,0,BENIGN,train,Monday-WorkingHours,train
+12,2017-07-03 12:55:00,2017-07-03 13:14:59,15246,0,BENIGN,train,Monday-WorkingHours,train
+13,2017-07-03 13:15:00,2017-07-03 13:34:59,14504,0,BENIGN,train,Monday-WorkingHours,train
+14,2017-07-03 13:35:00,2017-07-03 13:54:59,27761,0,BENIGN,train,Monday-WorkingHours,train
+15,2017-07-03 13:55:00,2017-07-03 14:14:59,18628,0,BENIGN,test,Monday-WorkingHours,train
+16,2017-07-03 14:15:00,2017-07-03 14:34:59,16706,0,BENIGN,test,Monday-WorkingHours,train
+17,2017-07-03 14:35:00,2017-07-03 14:54:59,12661,0,BENIGN,validation,Monday-WorkingHours,train
+18,2017-07-03 14:55:00,2017-07-03 15:14:59,16737,0,BENIGN,train,Monday-WorkingHours,train
+19,2017-07-03 15:15:00,2017-07-03 15:34:59,18859,0,BENIGN,test,Monday-WorkingHours,train
+20,2017-07-03 15:35:00,2017-07-03 15:54:59,13052,0,BENIGN,test,Monday-WorkingHours,train
+21,2017-07-03 15:55:00,2017-07-03 16:14:59,18103,0,BENIGN,train,Monday-WorkingHours,train
+22,2017-07-03 16:15:00,2017-07-03 16:34:59,22591,0,BENIGN,train,Monday-WorkingHours,train
+23,2017-07-03 16:35:00,2017-07-03 16:54:59,26551,0,BENIGN,train,Monday-WorkingHours,train
+24,2017-07-03 16:55:00,2017-07-03 17:01:34,5467,0,BENIGN,validation,Monday-WorkingHours,train
+0,2017-07-06 13:00:00,2017-07-06 13:19:00,12539,0,BENIGN,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+1,2017-07-06 13:20:00,2017-07-06 13:39:00,17853,0,BENIGN,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+2,2017-07-06 13:40:00,2017-07-06 13:59:00,19695,0,BENIGN,validation,Thursday-WorkingHours-Afternoon-Infilteration,validation
+3,2017-07-06 14:00:00,2017-07-06 14:19:00,18724,2,Infiltration,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+4,2017-07-06 14:20:00,2017-07-06 14:39:00,17855,13,Infiltration,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+5,2017-07-06 14:40:00,2017-07-06 14:59:00,21086,3,Infiltration,test,Thursday-WorkingHours-Afternoon-Infilteration,validation
+6,2017-07-06 15:00:00,2017-07-06 15:19:00,47962,7,Infiltration,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+7,2017-07-06 15:20:00,2017-07-06 15:39:00,53244,8,Infiltration,validation,Thursday-WorkingHours-Afternoon-Infilteration,validation
+8,2017-07-06 15:40:00,2017-07-06 15:59:00,28022,3,Infiltration,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+9,2017-07-06 16:00:00,2017-07-06 16:19:00,13163,0,BENIGN,test,Thursday-WorkingHours-Afternoon-Infilteration,validation
+10,2017-07-06 16:20:00,2017-07-06 16:39:00,17186,0,BENIGN,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+11,2017-07-06 16:40:00,2017-07-06 16:59:00,18458,0,BENIGN,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+12,2017-07-06 17:00:00,2017-07-06 17:04:00,2466,0,BENIGN,train,Thursday-WorkingHours-Afternoon-Infilteration,validation
+0,2017-07-06 08:59:00,2017-07-06 09:18:00,15871,9,Web Attack - Brute Force,validation,Thursday-WorkingHours-Morning-WebAttacks,validation
+1,2017-07-06 09:19:00,2017-07-06 09:38:00,20850,671,Web Attack - Brute Force,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+2,2017-07-06 09:39:00,2017-07-06 09:58:00,24782,781,Web Attack - Brute Force,test,Thursday-WorkingHours-Morning-WebAttacks,validation
+3,2017-07-06 09:59:00,2017-07-06 10:18:00,12428,144,Web Attack - XSS,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+4,2017-07-06 10:19:00,2017-07-06 10:38:00,15454,554,Web Attack - XSS,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+5,2017-07-06 10:39:00,2017-07-06 10:58:00,18187,21,Web Attack - Sql Injection,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+6,2017-07-06 10:59:00,2017-07-06 11:18:00,10948,0,BENIGN,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+7,2017-07-06 11:19:00,2017-07-06 11:38:00,10796,0,BENIGN,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+8,2017-07-06 11:39:00,2017-07-06 11:58:00,19028,0,BENIGN,validation,Thursday-WorkingHours-Morning-WebAttacks,validation
+9,2017-07-06 11:59:00,2017-07-06 12:18:00,13289,0,BENIGN,test,Thursday-WorkingHours-Morning-WebAttacks,validation
+10,2017-07-06 12:19:00,2017-07-06 12:38:00,3598,0,BENIGN,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+11,2017-07-06 12:39:00,2017-07-06 12:58:00,4830,0,BENIGN,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+12,2017-07-06 12:59:00,2017-07-06 12:59:00,169,0,BENIGN,train,Thursday-WorkingHours-Morning-WebAttacks,validation
+0,2017-07-04 08:53:00,2017-07-04 09:12:00,15247,0,BENIGN,train,Tuesday-WorkingHours,train
+1,2017-07-04 09:13:00,2017-07-04 09:32:00,29853,1748,FTP-Patator,test,Tuesday-WorkingHours,train
+2,2017-07-04 09:33:00,2017-07-04 09:52:00,34686,2621,FTP-Patator,train,Tuesday-WorkingHours,train
+3,2017-07-04 09:53:00,2017-07-04 10:12:00,28792,2596,FTP-Patator,train,Tuesday-WorkingHours,train
+4,2017-07-04 10:13:00,2017-07-04 10:32:00,17507,970,FTP-Patator,validation,Tuesday-WorkingHours,train
+5,2017-07-04 10:33:00,2017-07-04 10:52:00,17010,0,BENIGN,train,Tuesday-WorkingHours,train
+6,2017-07-04 10:53:00,2017-07-04 11:12:00,23653,0,BENIGN,train,Tuesday-WorkingHours,train
+7,2017-07-04 11:13:00,2017-07-04 11:32:00,17331,0,BENIGN,train,Tuesday-WorkingHours,train
+8,2017-07-04 11:33:00,2017-07-04 11:52:00,16513,0,BENIGN,train,Tuesday-WorkingHours,train
+9,2017-07-04 11:53:00,2017-07-04 12:12:00,11649,0,BENIGN,train,Tuesday-WorkingHours,train
+10,2017-07-04 12:13:00,2017-07-04 12:32:00,4542,0,BENIGN,validation,Tuesday-WorkingHours,train
+11,2017-07-04 12:33:00,2017-07-04 12:52:00,5431,0,BENIGN,train,Tuesday-WorkingHours,train
+12,2017-07-04 12:53:00,2017-07-04 13:12:00,9314,0,BENIGN,train,Tuesday-WorkingHours,train
+13,2017-07-04 13:13:00,2017-07-04 13:32:00,11487,0,BENIGN,validation,Tuesday-WorkingHours,train
+14,2017-07-04 13:33:00,2017-07-04 13:52:00,14556,0,BENIGN,validation,Tuesday-WorkingHours,train
+15,2017-07-04 13:53:00,2017-07-04 14:12:00,16041,368,SSH-Patator,validation,Tuesday-WorkingHours,train
+16,2017-07-04 14:13:00,2017-07-04 14:32:00,29889,1897,SSH-Patator,test,Tuesday-WorkingHours,train
+17,2017-07-04 14:33:00,2017-07-04 14:52:00,24677,1958,SSH-Patator,train,Tuesday-WorkingHours,train
+18,2017-07-04 14:53:00,2017-07-04 15:12:00,16476,1674,SSH-Patator,train,Tuesday-WorkingHours,train
+19,2017-07-04 15:13:00,2017-07-04 15:32:00,21756,0,BENIGN,test,Tuesday-WorkingHours,train
+20,2017-07-04 15:33:00,2017-07-04 15:52:00,11784,0,BENIGN,test,Tuesday-WorkingHours,train
+21,2017-07-04 15:53:00,2017-07-04 16:12:00,10526,0,BENIGN,train,Tuesday-WorkingHours,train
+22,2017-07-04 16:13:00,2017-07-04 16:32:00,28971,0,BENIGN,train,Tuesday-WorkingHours,train
+23,2017-07-04 16:33:00,2017-07-04 16:52:00,21443,0,BENIGN,train,Tuesday-WorkingHours,train
+24,2017-07-04 16:53:00,2017-07-04 17:00:00,6507,0,BENIGN,test,Tuesday-WorkingHours,train
+0,2017-07-05 08:42:00,2017-07-05 09:01:00,14505,1,DoS slowloris,test,Wednesday-workingHours,train
+1,2017-07-05 09:02:00,2017-07-05 09:21:00,16685,0,BENIGN,train,Wednesday-workingHours,train
+2,2017-07-05 09:22:00,2017-07-05 09:41:00,17488,0,BENIGN,train,Wednesday-workingHours,train
+3,2017-07-05 09:42:00,2017-07-05 10:01:00,23690,3587,DoS slowloris,train,Wednesday-workingHours,train
+4,2017-07-05 10:02:00,2017-07-05 10:21:00,27715,3705,DoS slowloris,train,Wednesday-workingHours,train
+5,2017-07-05 10:22:00,2017-07-05 10:41:00,26815,3997,DoS Slowhttptest,train,Wednesday-workingHours,train
+6,2017-07-05 10:42:00,2017-07-05 11:01:00,254657,229978,DoS Hulk,train,Wednesday-workingHours,train
+7,2017-07-05 11:02:00,2017-07-05 11:21:00,28510,10438,DoS GoldenEye,train,Wednesday-workingHours,train
+8,2017-07-05 11:22:00,2017-07-05 11:41:00,11870,0,BENIGN,train,Wednesday-workingHours,train
+9,2017-07-05 11:42:00,2017-07-05 12:01:00,19955,0,BENIGN,train,Wednesday-workingHours,train
+10,2017-07-05 12:02:00,2017-07-05 12:21:00,11349,0,BENIGN,train,Wednesday-workingHours,train
+11,2017-07-05 12:22:00,2017-07-05 12:41:00,5859,0,BENIGN,train,Wednesday-workingHours,train
+12,2017-07-05 12:42:00,2017-07-05 13:01:00,5746,0,BENIGN,validation,Wednesday-workingHours,train
+13,2017-07-05 13:02:00,2017-07-05 13:21:00,15884,0,BENIGN,train,Wednesday-workingHours,train
+14,2017-07-05 13:22:00,2017-07-05 13:41:00,15497,0,BENIGN,train,Wednesday-workingHours,train
+15,2017-07-05 13:42:00,2017-07-05 14:01:00,18262,0,BENIGN,validation,Wednesday-workingHours,train
+16,2017-07-05 14:02:00,2017-07-05 14:21:00,20887,0,BENIGN,validation,Wednesday-workingHours,train
+17,2017-07-05 14:22:00,2017-07-05 14:41:00,26330,5,DoS slowloris,validation,Wednesday-workingHours,train
+18,2017-07-05 14:42:00,2017-07-05 15:01:00,15926,0,BENIGN,test,Wednesday-workingHours,train
+19,2017-07-05 15:02:00,2017-07-05 15:21:00,37422,5,Heartbleed,train,Wednesday-workingHours,train
+20,2017-07-05 15:22:00,2017-07-05 15:41:00,17368,6,Heartbleed,train,Wednesday-workingHours,train
+21,2017-07-05 15:42:00,2017-07-05 16:01:00,12113,0,BENIGN,test,Wednesday-workingHours,train
+22,2017-07-05 16:02:00,2017-07-05 16:21:00,15348,0,BENIGN,train,Wednesday-workingHours,train
+23,2017-07-05 16:22:00,2017-07-05 16:41:00,14242,0,BENIGN,train,Wednesday-workingHours,train
+24,2017-07-05 16:42:00,2017-07-05 17:01:00,15108,0,BENIGN,train,Wednesday-workingHours,train
+25,2017-07-05 17:02:00,2017-07-05 17:10:00,2159,0,BENIGN,test,Wednesday-workingHours,train

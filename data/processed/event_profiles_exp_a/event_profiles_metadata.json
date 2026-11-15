@@ -1,0 +1,110 @@
+{
+  "experiment_mode": "exp_a",
+  "output_directory": "C:\\Users\\pavani krishna\\Desktop\\cyber\\cyber-threat-detection\\data\\processed\\event_profiles_exp_a",
+  "model_input_file": "event_profiles.csv",
+  "ground_truth_file": "event_set_targets.csv",
+  "model_input_columns": [
+    "bp_01",
+    "bp_02",
+    "bp_03",
+    "bp_04",
+    "bp_05",
+    "bp_06",
+    "bp_07",
+    "bp_08"
+  ],
+  "identifier_columns": [
+    "event_set_id",
+    "window_id",
+    "split",
+    "window_start"
+  ],
+  "join_key": "event_set_id",
+  "total_event_sets": 2569260,
+  "split_distribution": {
+    "train": 1935461,
+    "validation": 321262,
+    "test": 312537
+  },
+  "target_binary_distribution": {
+    "test": {
+      "0": 312439,
+      "1": 98
+    },
+    "train": {
+      "0": 1934373,
+      "1": 1088
+    },
+    "validation": {
+      "0": 321097,
+      "1": 165
+    }
+  },
+  "target_multiclass_distribution": {
+    "BENIGN": 2567909,
+    "Bot": 889,
+    "FTP-Patator": 56,
+    "SSH-Patator": 54,
+    "PortScan": 52,
+    "Infiltration": 52,
+    "DDoS": 40,
+    "DoS slowloris": 40,
+    "Heartbleed": 30,
+    "Web Attack - XSS": 29,
+    "Web Attack - Brute Force": 28,
+    "DoS Slowhttptest": 27,
+    "DoS Hulk": 27,
+    "DoS GoldenEye": 19,
+    "Web Attack - Sql Injection": 8
+  },
+  "basepoints_count": 8,
+  "thresholds": {
+    "HIGH_PACKET_RATE": {
+      "level": "flow",
+      "feature": "flow_packets_s",
+      "percentile": 95,
+      "comparison": "gt",
+      "threshold": 666666.7,
+      "n_training_values": 1955329,
+      "n_nonfinite_ignored": 0
+    },
+    "HIGH_BYTE_RATE": {
+      "level": "flow",
+      "feature": "flow_bytes_s",
+      "percentile": 95,
+      "comparison": "gt",
+      "threshold": 2178403.8,
+      "n_training_values": 1955329,
+      "n_nonfinite_ignored": 0
+    },
+    "SYN_ACTIVITY": {
+      "level": "flow",
+      "feature": "syn_flag_count",
+      "percentile": 95,
+      "comparison": "ge",
+      "threshold": 0.0,
+      "n_training_values": 1955329,
+      "n_nonfinite_ignored": 0
+    },
+    "SHORT_REPEATED_CONNECTIONS": {
+      "level": "flow",
+      "feature": "flow_duration",
+      "percentile": 5,
+      "comparison": "lt",
+      "threshold": 4.0,
+      "n_training_values": 1955329,
+      "n_nonfinite_ignored": 0
+    },
+    "HIGH_FLOW_RATE": {
+      "level": "event_set",
+      "feature": "flows in the source->destination event set",
+      "percentile": 95,
+      "comparison": "gt",
+      "threshold": 12.0,
+      "n_training_values": 1935461,
+      "n_nonfinite_ignored": 0
+    }
+  },
+  "elapsed_seconds": 144.14,
+  "generated_at": "2026-11-14T11:53:31.843114"
+}

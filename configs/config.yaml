@@ -1,0 +1,118 @@
+# =============================================================================
+# AI-SIEM project configuration
+# Every value here can be changed WITHOUT editing Python code.
+# If a key is missing, the built-in default in src/config.py is used.
+# Paths are relative to the project root (the folder that contains `src/`).
+# =============================================================================
+
+paths:
+  raw_dir: data/raw            # original CSVs - NEVER modified
+  interim_dir: data/interim    # small helper files (e.g. column mapping)
+  processed_dir: data/processed
+  reports_dir: reports
+
+dataset:
+  name: CICIDS2017
+  raw_files: auto              # "auto" = every *.csv in raw_dir, or a list: ["Tuesday-WorkingHours.pcap_ISCX.csv"]
+  encoding: latin-1
+
+labels:
+  benign_label: BENIGN
+  attack_labels:
+    - FTP-Patator
+    - SSH-Patator
+    - DoS Hulk
+    - DoS GoldenEye
+    - DoS slowloris
+    - DoS Slowhttptest
+    - Heartbleed
+    - Web Attack - Brute Force
+    - Web Attack - XSS
+    - Web Attack - Sql Injection
+    - Infiltration
+    - Bot
+    - PortScan
+    - DDoS
+  # What to do with a label that is in neither list:
+  #   error  = stop and tell me (safest, default)
+  #   attack = treat it as an attack
+  unknown_label_policy: error
+
+cleaning:
+  # NaN / +-Infinity in numeric columns:
+  #   drop_rows   = remove those rows (default; tiny share of the data, safe for later splitting)
+  #   keep_as_nan = keep rows, turn infinity into NaN, handle later (impute using TRAIN data only)
+  non_finite_strategy: drop_rows
+  max_drop_fraction: 0.01      # safety stop if more than 1% of rows would be dropped
+  remove_duplicates: true      # fully identical rows
+  duplicate_keep: first        # first | last
+  remove_constant_columns: true
+  # Rows with an invalid IP address / port / protocol number:
+  #   drop = remove them, error = stop
+  invalid_network_fields: drop
+
+timestamp:
+  # Day/month order of dates such as 4/7/2017:
+  #   auto        = test both; if both fit, decide by the weekday in the file name
+  #   day_first   = 4/7/2017 means 4 July
+  #   month_first = 4/7/2017 means 7 April
+  date_order: auto
+  expected_weekday: auto       # auto (from file name) | Monday..Sunday | none
+  fallback_date_order: day_first   # used only if auto cannot decide (the report will flag it)
+  # Some CICIDS2017 files show afternoon hours as 1-5 (12-hour clock, no AM/PM).
+  #   auto   = fix only if the data shows that pattern
+  #   always / never = force
+  hour_correction: auto
+  max_unparseable_fraction: 0.001
+
+features:
+  # Columns kept in the processed file for TRACEABILITY and for Phase 3 (event mapping),
+  # but NOT given to a model as ordinary numeric features (see report for why).
+  context_columns: [flow_id, source_ip, destination_ip, source_port, destination_port, protocol, timestamp]
+
+split:
+  # Blocked time split: the timeline is cut into blocks; each block goes entirely to
+  # train / validation / test (stratified by attack type). See the report for the reasoning.
+  enabled: true
+  block_minutes: 20
+  train_fraction: 0.70
+  validation_fraction: 0.15
+  test_fraction: 0.15
+  random_seed: 42
+
+output:
+  format: csv                  # csv (default). parquet needs: pip install pyarrow
+  float_dtype: float32         # float32 | float64 for numeric features
+  sample_rows: 1000            # size of the small human-readable sample file (0 = none)
+
+# --- Used in later phases (listed here so everything lives in one file) ---
+window:
+  size_seconds: 600
+  step_seconds: 60
+
+models:
+  default_model: FCNN
+
+# =============================================================================
+# PHASE 3 - event profile generation (appended; Phase 2 settings above are unchanged)
+# Window size/step are read from the `window:` section above.
+# =============================================================================
+event_profiles:
+  grouping: source_destination      # the paper groups each window by source AND destination address
+  input_file: auto                  # "auto" = the single *_clean.csv in paths.processed_dir, or a file name
+  output_dir: data/processed/event_profiles
+  high_percentile: 95               # "unusually high" = above this training percentile
+  short_percentile: 5               # "unusually short" = below this training percentile
+  rare_event_types: 2               # size of the rare-event list used to pick basepoint candidates
+  basepoints: 8                     # target number of basepoints (fewer may be found; reported)
+  redundancy_threshold: 0.95        # a candidate with cosine >= this to a chosen basepoint is redundant
+  sublinear_tf: true                # tf = 1 + ln(count)
+  min_attack_flows: 1               # an event set is an attack set if it holds at least this many attack flows
+  min_attack_fraction: 0.0          # ... and at least this share of its flows is attack
+  trigger_share_warning: 0.10       # warn if an event fires on more than this share of training flows
+  comparisons:                      # gt/ge for "high" rules, lt/le for the "short" rule
+    HIGH_FLOW_RATE: gt
+    HIGH_PACKET_RATE: gt
+    HIGH_BYTE_RATE: gt
+    SYN_ACTIVITY: ge
+    SHORT_REPEATED_CONNECTIONS: lt

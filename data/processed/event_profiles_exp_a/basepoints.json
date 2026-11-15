@@ -1,0 +1,51 @@
+{
+  "rare_events": [
+    "HIGH_FLOW_RATE",
+    "HIGH_PACKET_RATE"
+  ],
+  "n_training_nonempty_sets": 1935461,
+  "n_distinct_candidates": 14323,
+  "trace": [
+    {
+      "order": 1,
+      "max_cosine_to_previous": null,
+      "rare_event_weight": 1.2550133855629384
+    },
+    {
+      "order": 2,
+      "max_cosine_to_previous": 0.19392822936488519,
+      "rare_event_weight": 0.21252977203071283
+    },
+    {
+      "order": 3,
+      "max_cosine_to_previous": 0.5050958581124713,
+      "rare_event_weight": 0.4031878169392152
+    },
+    {
+      "order": 4,
+      "max_cosine_to_previous": 0.5816230894758407,
+      "rare_event_weight": 0.5867587469991629
+    },
+    {
+      "order": 5,
+      "max_cosine_to_previous": 0.5826834448882625,
+      "rare_event_weight": 0.5779793980174555
+    },
+    {
+      "order": 6,
+      "max_cosine_to_previous": 0.6889933638406878,
+      "rare_event_weight": 0.5555492751110704
+    },
+    {
+      "order": 7,
+      "max_cosine_to_previous": 0.7329284759246203,
+      "rare_event_weight": 0.4457235330482197
+    },
+    {
+      "order": 8,
+      "max_cosine_to_previous": 0.7810543189516519,
+      "rare_event_weight": 0.9692509748240414
+    }
+  ],
+  "stop_reason": "reached the requested number of basepoints"
+}

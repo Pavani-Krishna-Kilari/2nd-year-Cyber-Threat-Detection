@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI SIEM SOC | Security Information and Event Management Login</title>
+  <link rel="stylesheet" href="/static/css/login.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300E5FF'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z'/></svg>">
+</head>
+<body>
+
+  <!-- Full-Screen Interactive Neural Particle Network Canvas -->
+  <canvas id="networkCanvas"></canvas>
+
+  <!-- Ambient Cyber Glows -->
+  <div class="ambient-glow glow-top-left"></div>
+  <div class="ambient-glow glow-top-right"></div>
+  <div class="ambient-glow glow-bottom-center"></div>
+
+  <!-- Main Split-Screen Container -->
+  <div class="login-page-container">
+    <div class="split-layout">
+
+      <!-- ===================================================================
+           LEFT SECTION: AI-SIEM BRANDING & INTELLIGENCE FEATURES
+           =================================================================== -->
+      <section class="left-brand-section">
+        
+        <!-- Header Branding -->
+        <div class="brand-header">
+          <div class="brand-shield-wrapper">
+            <div class="brand-shield-glow"></div>
+            <!-- Glowing Cyber Shield & Padlock SVG -->
+            <svg class="brand-shield-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00E5FF"/>
+                  <stop offset="50%" stop-color="#287BFF"/>
+                  <stop offset="100%" stop-color="#8B35FF"/>
+                </linearGradient>
+                <linearGradient id="innerShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#8B35FF" stop-opacity="0.05"/>
+                </linearGradient>
+                <filter id="shieldGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <!-- Outer Glowing Shield Contour -->
+              <path d="M50 8 L18 22 C18 48 30 76 50 90 C70 76 82 48 82 22 Z" 
+                    fill="url(#innerShieldGrad)" 
+                    stroke="url(#shieldGrad)" 
+                    stroke-width="3" 
+                    filter="url(#shieldGlow)" />
+              <!-- Inner Shield Line -->
+              <path d="M50 16 L25 27 C25 48 35 70 50 81 C65 70 75 48 75 27 Z" 
+                    stroke="rgba(0, 229, 255, 0.4)" 
+                    stroke-width="1.2" 
+                    stroke-dasharray="3 3" />
+              <!-- Center Padlock -->
+              <rect x="40" y="46" width="20" height="18" rx="4" fill="#00E5FF" fill-opacity="0.9" />
+              <path d="M44 46 V39 C44 35.7 46.7 33 50 33 C53.3 33 56 35.7 56 39 V46" 
+                    stroke="#00E5FF" 
+                    stroke-width="3" 
+                    stroke-linecap="round" />
+              <circle cx="50" cy="53" r="2" fill="#020817" />
+              <path d="M50 55 V59" stroke="#020817" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <div class="brand-text-box">
+            <h1>AI SIEM <span class="soc-highlight">SOC</span></h1>
+            <p>AI-Powered Security Information and Event Management</p>
+          </div>
+        </div>
+
+        <!-- Tagline & Description -->
+        <div class="brand-accent-divider"></div>
+        <div class="brand-tagline">
+          <span class="tag-detect">Detect</span>
+          <span class="tag-dot">•</span>
+          <span class="tag-analyze">Analyze</span>
+          <span class="tag-dot">•</span>
+          <span class="tag-respond">Respond</span>
+        </div>
+        <p class="brand-description">
+          Monitor, analyze and stop cyber threats with the power of artificial neural networks and unsupervised event profiling.
+        </p>
+
+        <!-- Three Feature Cards -->
+        <div class="feature-cards-grid">
+          
+          <!-- Card 1: Real-Time Threat Detection -->
+          <div class="feature-card">
+            <div class="feature-icon-badge cyan">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <div class="feature-info">
+              <h3>Real-Time Threat Detection</h3>
+              <p>Identify security threats as they happen</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Intelligent Analytics -->
+          <div class="feature-card">
+            <div class="feature-icon-badge purple">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+              </svg>
+            </div>
+            <div class="feature-info">
+              <h3>Intelligent Analytics</h3>
+              <p>Analyze and visualize security events</p>
+            </div>
+          </div>
+
+          <!-- Card 3: Automated Response -->
+          <div class="feature-card">
+            <div class="feature-icon-badge blue">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <div class="feature-info">
+              <h3>Automated Response</h3>
+              <p>Respond intelligently to potential cyber threats</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Digital Globe / Cybersecurity Network at Bottom -->
+        <div class="globe-visual-container">
+          <canvas id="globeCanvas"></canvas>
+          <div class="globe-telemetry-badge">
+            <span class="globe-telemetry-dot"></span>
+            <span>GLOBAL THREAT MATRIX: ACTIVE</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================
+           RIGHT SECTION: GLASSMORPHISM LOGIN CARD
+           =================================================================== -->
+      <section class="right-form-section">
+        <div class="login-glass-card">
+          
+          <div class="card-border-glow"></div>
+
+          <!-- Animated Shield & Lock Emblem with Concentric Rotating Rings -->
+          <div class="card-emblem-container">
+            <div class="emblem-ring-outer"></div>
+            <div class="emblem-ring-inner"></div>
+            <div class="emblem-icon-badge">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #00E5FF;">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <rect x="9" y="10" width="6" height="5" rx="1.5" fill="#00E5FF"/>
+                <path d="M10 10V8.5a2 2 0 1 1 4 0V10"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Heading -->
+          <div class="card-header-text">
+            <h2>Welcome Back!</h2>
+            <p>Sign in to your AI SIEM SOC dashboard</p>
+          </div>
+
+          <!-- Alert Notification Box -->
+          <div id="alertBox" class="alert-box">
+            <span id="alertIcon">⚠️</span>
+            <span id="alertMessage">Notification</span>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm" autocomplete="on">
+            
+            <!-- Email Address Field -->
+            <div class="form-group">
+              <div class="input-container" id="emailContainer">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <input type="email" id="inputEmail" class="form-input" placeholder="Email Address" required autocomplete="username">
+              </div>
+            </div>
+
+            <!-- Password Field with Show/Hide Toggle -->
+            <div class="form-group">
+              <div class="input-container" id="passwordContainer">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input type="password" id="inputPassword" class="form-input" placeholder="Password" required autocomplete="current-password">
+                <button type="button" id="btnTogglePassword" class="btn-toggle-password" title="Show/Hide Password" aria-label="Toggle password visibility">
+                  <svg id="iconEye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg id="iconEyeOff" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                    <line x1="2" y1="2" x2="22" y2="22"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Options Row: Remember Me & Forgot Password -->
+            <div class="options-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="checkRememberMe" checked>
+                <span class="custom-checkbox">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span>Remember Me</span>
+              </label>
+              <a href="#" id="linkForgotPassword" class="link-forgot">Forgot Password?</a>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" id="btnLogin" class="btn-login">
+              <span id="btnLoginText" style="display: flex; align-items: center; gap: 8px;">
+                <svg class="btn-icon-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+                <span>Login</span>
+              </span>
+              <div id="btnLoginSpinner" class="spinner" style="display: none;"></div>
+            </button>
+
+          </form>
+
+          <!-- OR Divider -->
+          <div class="divider-row">
+            <span class="divider-line"></span>
+            <span class="divider-text">OR</span>
+            <span class="divider-line"></span>
+          </div>
+
+          <!-- Continue with Google Button -->
+          <button type="button" id="btnGoogleLogin" class="btn-google">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.66-5.17 3.66-9.12z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.27 21.43 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.57H1.25C.45 8.16 0 9.99 0 12s.45 3.84 1.25 5.43l4.03-3.14z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.27 2.57 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+
+          <!-- Footer Link: Contact Administrator -->
+          <div class="card-footer-text">
+            <span>Don't have an account?</span>
+            <a href="#" id="linkContactAdmin">Contact Administrator</a>
+          </div>
+
+          <!-- Quick Demo Credentials Helper Bar -->
+          <div class="demo-pill-bar">
+            <div class="demo-pill-info">
+              <span>Demo: <strong>admin@soc.ai</strong></span>
+            </div>
+            <button type="button" id="btnQuickFill" class="btn-quick-fill">⚡ Quick-Fill Demo</button>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: FORGOT PASSWORD RECOVERY PROTOCOL
+       ========================================================================= -->
+  <div id="modalForgotPassword" class="modal-overlay">
+    <div class="modal-content-card">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <div class="modal-header-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>Reset Password</h3>
+            <p>SOC Recovery Protocol</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseForgotModal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p>Enter your registered SOC operator work email. An encrypted security reset token will be dispatched through out-of-band enterprise channels.</p>
+        <div class="form-group" id="groupForgotEmail">
+          <label class="form-label" for="inputForgotEmail">Operator Work Email</label>
+          <div class="input-container">
+            <span class="input-icon-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </span>
+            <input type="email" id="inputForgotEmail" class="form-input" placeholder="e.g. admin@soc.ai" required>
+          </div>
+        </div>
+
+        <!-- Token Entry & Reset Step (Revealed after dispatch) -->
+        <div id="resetPasswordStep" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px dashed rgba(0, 229, 255, 0.25);">
+          <div class="form-group">
+            <label class="form-label" for="inputResetToken">One-Time Recovery Token (15m validity)</label>
+            <input type="text" id="inputResetToken" class="form-input" style="padding-left: 14px; background: var(--bg-input); border: 1px solid rgba(0,229,255,0.25); border-radius: 8px;" placeholder="REC-YYYYMMDD-XXXX">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputNewPassword">New Secure Password (min 8 chars)</label>
+            <input type="password" id="inputNewPassword" class="form-input" style="padding-left: 14px; background: var(--bg-input); border: 1px solid rgba(0,229,255,0.25); border-radius: 8px;" placeholder="Enter new password">
+          </div>
+          <button type="button" class="btn-primary-modal" id="btnApplyNewPassword" style="width: 100%; margin-top: 8px;">
+            Set New Password & Complete Recovery
+          </button>
+        </div>
+
+        <div id="forgotResultBox" class="alert-box" style="margin-top: 14px;"></div>
+      </div>
+
+      <div class="modal-footer" id="forgotModalFooter">
+        <button type="button" class="btn-secondary-modal" id="btnCancelForgot">Cancel</button>
+        <button type="button" class="btn-primary-modal" id="btnSubmitForgot">Send Protocol Token</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: CONTACT SOC ADMINISTRATOR
+       ========================================================================= -->
+  <div id="modalContactAdmin" class="modal-overlay">
+    <div class="modal-content-card">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <div class="modal-header-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>Contact Administrator</h3>
+            <p>Request SOC Security Clearance</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseContactModal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="inputContactName">Full Name</label>
+          <input type="text" id="inputContactName" class="form-input" style="padding-left: 14px; background: var(--bg-input); border: 1px solid rgba(0,229,255,0.2); border-radius: 8px;" placeholder="e.g. Rachel Torres" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="inputContactEmail">Corporate Work Email</label>
+          <input type="email" id="inputContactEmail" class="form-input" style="padding-left: 14px; background: var(--bg-input); border: 1px solid rgba(0,229,255,0.2); border-radius: 8px;" placeholder="e.g. rachel.torres@soc-defense.org" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="selectClearance">Requested Clearance Tier</label>
+          <select id="selectClearance" class="modal-select">
+            <option value="Tier 1 - Telemetry & Ingestion">Tier 1 - Telemetry & Ingestion Stream</option>
+            <option value="Tier 2 - Incident Analysis & Triage">Tier 2 - Incident Analysis & Triage</option>
+            <option value="Tier 3 - Advanced Threat Hunting & Neural Tuning">Tier 3 - Threat Hunting & Neural Tuning</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="inputContactReason">Justification / Request Reason</label>
+          <textarea id="inputContactReason" class="modal-textarea" placeholder="Detail your security operational justification and department affiliation..."></textarea>
+        </div>
+        <div id="contactResultBox" class="alert-box" style="margin-top: 10px;"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-modal" id="btnCancelContact">Cancel</button>
+        <button type="button" class="btn-primary-modal" id="btnSubmitContact">Submit Clearance Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: GOOGLE WORKSPACE SSO ENTERPRISE CONFIRMATION
+       ========================================================================= -->
+  <div id="modalGoogleSSO" class="modal-overlay">
+    <div class="modal-content-card">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <div class="modal-header-icon" style="background: rgba(66, 133, 244, 0.15); border-color: rgba(66, 133, 244, 0.4); color: #4285F4;">
+            <svg width="22" height="22" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.66-5.17 3.66-9.12z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.27 21.43 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.57H1.25C.45 8.16 0 9.99 0 12s.45 3.84 1.25 5.43l4.03-3.14z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.27 2.57 1.25 6.57l4.03 3.14c.95-2.83 3.6-4.96 6.72-4.96z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Google Workspace SSO</h3>
+            <p>Enterprise Federated Identity</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseGoogleModal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="googleConfigBadge" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; font-family: var(--font-mono); background: rgba(66, 133, 244, 0.15); border: 1px solid rgba(66, 133, 244, 0.35); color: #8ab4f8; margin-bottom: 14px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: #4285F4; box-shadow: 0 0 6px #4285F4;"></span>
+          <span id="googleConfigBadgeText">OAuth 2.0 Integration Status: Ready</span>
+        </div>
+
+        <p id="googleModalDescription">
+          Google Workspace SSO utilizes standard OAuth 2.0 PKCE with cryptographic CSRF state validation.
+          When registered in the Google Cloud Console, operators are directed to Google's sign-in screen.
+          In local developer mode, a simulation profile is available below for integration verification.
+        </p>
+        
+        <div class="sso-profile-card">
+          <div class="sso-avatar">JM</div>
+          <div class="sso-details">
+            <h4 id="googleProfileName">Jordan Mitchell (SSO Federated Demo)</h4>
+            <p id="googleProfileEmail">analyst.google@soc-siem.cloud</p>
+          </div>
+        </div>
+
+        <div id="googleResultBox" class="alert-box" style="margin-top: 10px;"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-modal" id="btnCancelGoogle">Cancel</button>
+        <button type="button" class="btn-primary-modal" id="btnConfirmGoogleSSO" style="background: linear-gradient(135deg, #4285F4, #34A853);">
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       SEAMLESS DASHBOARD TRANSITION STAGE (REVEALED UNDERNEATH FADING VIDEO)
+       ========================================================================= -->
+  <div id="dashboardStage" class="dashboard-stage-container" aria-hidden="true">
+    <iframe id="dashboardStageFrame" class="dashboard-stage-frame" title="AI SIEM SOC Dashboard Preview"></iframe>
+  </div>
+
+  <!-- =========================================================================
+       CINEMATIC LOGIN SUCCESS ANIMATION OVERLAY (EXACT REFERENCE VIDEO)
+       ========================================================================= -->
+  <div id="loginSuccessOverlay" class="login-success-overlay" aria-hidden="true">
+    <div class="video-frame-container">
+      <video
+        id="loginSuccessVideo"
+        class="login-success-video"
+        preload="auto"
+        muted
+        playsinline
+      >
+        <source src="/static/videos/login_success.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- JavaScript Controller -->
+  <script type="module" src="/static/js/login.js"></script>
+</body>
+</html>
